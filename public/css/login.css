@@ -1,0 +1,44 @@
+body {
+    background-color: #f8f9fa;
+    background-image: url('../img/marca-agua-yiyo.png'); 
+    background-repeat: repeat; 
+    background-size: 150px; 
+    background-attachment: fixed; 
+}
+
+.bg-overlay {
+    min-height: 100vh;
+    background-color: rgba(255, 255, 255, 0.70); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* El color normal del botón */
+.btn-corporativo {
+    background-color: #ff3333; 
+    border-color: #ff3333;
+    transition: all 0.3s ease; 
+}
+
+/* El efecto cuando pasas el mouse por encima (hover) */
+.btn-corporativo:hover {
+    background-color: #e82e2e; /* Un tono un poquito más oscuro */
+    border-color: #e82e2e;
+    transform: translateY(-2px); /* Un leve saltito hacia arriba muy sutil */
+}
+
+/* olvidaste tu contraseña */
+/* Estado normal del enlace */
+.link-olvido {
+    color: #8c92a0; /* Un gris elegante y discreto */
+    text-decoration: none; /* Sin línea abajo por defecto */
+    transition: all 0.2s ease-in-out; /* Animación suave */
+}
+
+/* Efecto al pasar el mouse (hover) */
+.link-olvido:hover {
+    color: #343a40; /* Se oscurece para indicar que es clickeable */
+    text-decoration: underline; /* Aparece la línea clásica de enlace */
+}
