@@ -2,11 +2,25 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Nombre -->
+        <!-- RUT -->
         <div>
+            <x-input-label for="rut" :value="__('RUT')" />
+            <x-text-input id="rut" class="block mt-1 w-full" type="text" name="rut" :value="old('rut')" required autofocus />
+            <x-input-error :messages="$errors->get('rut')" class="mt-2" />
+        </div>
+
+        <!-- Nombre -->
+        <div class="mt-4">
             <x-input-label for="nombre" :value="__('Nombre')" />
-            <x-text-input id="nombre" class="block mt-1 w-full" type="text" name="nombre" :value="old('nombre')" required autofocus autocomplete="nombre" />
+            <x-text-input id="nombre" class="block mt-1 w-full" type="text" name="nombre" :value="old('nombre')" required />
             <x-input-error :messages="$errors->get('nombre')" class="mt-2" />
+        </div>
+
+        <!-- Email Address -->
+        <div class="mt-4">
+            <x-input-label for="email" :value="__('Email')" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Rol -->

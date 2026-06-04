@@ -14,6 +14,9 @@ class Usuario extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table = 'USUARIO';
+    protected $primaryKey = 'rut';
+    public $incrementing = false;
+    protected $keyType = 'string';
     public $timestamps = false;
 
     /**
@@ -22,7 +25,9 @@ class Usuario extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'rut',
         'nombre',
+        'email',
         'contrasena',
         'rol',
     ];

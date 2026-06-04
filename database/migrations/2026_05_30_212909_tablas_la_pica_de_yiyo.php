@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('USUARIO', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre', 100)->unique();
+            $table->string('rut', 12)->primary();
+            $table->string('nombre', 100);
+            $table->string('email', 255)->unique();
             $table->string('contrasena', 255);
             $table->enum('rol', ['administrador', 'garzon', 'cocina']);
         });
@@ -36,13 +37,15 @@ return new class extends Migration
         Schema::create('PEDIDO', function (Blueprint $table) {
             $table->id();
             $table->timestamp('fecha')->useCurrent();
-            $table->foreignId('id_usuario')->constrained('USUARIO');
+            $table->string('id_usuario', 12);
+            $table->foreign('id_usuario')->references('rut')->on('USUARIO');
         });
 
         Schema::create('RETIRO', function (Blueprint $table) {
             $table->id();
             $table->timestamp('fecha_hora')->useCurrent();
-            $table->foreignId('id_usuario')->constrained('USUARIO');
+            $table->string('id_usuario', 12);
+            $table->foreign('id_usuario')->references('rut')->on('USUARIO');
         });
 
         Schema::create('DETALLE_PEDIDO', function (Blueprint $table) {
