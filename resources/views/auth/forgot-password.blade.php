@@ -25,7 +25,7 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-4">
                     <a class="link-olvido small" href="{{ route('login') }}">
-                        Volver al Login
+                        Volver al Inicio de Sesión
                     </a>
                     
                     <button type="submit" class="btn text-white fw-bold px-4 btn-corporativo">
