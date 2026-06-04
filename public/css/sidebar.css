@@ -1,0 +1,74 @@
+
+.sidebar-container {
+    width: 260px; /* Ancho de la barra */
+    min-height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Zona del logo */
+.sidebar-logo-wrapper {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 8px;
+}
+
+.sidebar-logo {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+}
+
+.sidebar-menu {
+    margin-top: 32px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Separación entre botones */
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;    
+    gap: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 1.125rem; 
+    color: #374151; 
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease; /* Transición hover */
+}
+
+.sidebar-link:hover {
+    background-color: #f3f4f6; 
+    color: #111827; 
+    transform: translateX(5px); 
+}
+
+
+.sidebar-link.active {
+    background-color: #ef4444; 
+    color: #ffffff; 
+}
+
+.sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.sidebar-icon {
+    width: 28px;  
+    height: 28px;
+    object-fit: contain; 
+}
