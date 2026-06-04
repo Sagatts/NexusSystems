@@ -15,6 +15,7 @@ body {
 }
 
 
+
 /* El color normal del botón */
 .btn-corporativo {
     background-color: #ff3333; 
@@ -24,11 +25,10 @@ body {
 
 /* El efecto cuando pasas el mouse por encima (hover) */
 .btn-corporativo:hover {
-    background-color: #e82e2e; /* Un tono un poquito más oscuro */
-    border-color: #e82e2e;
+    background-color: #e62e2e; /* Un tono un poquito más oscuro */
+    border-color: #e62e2e;
     transform: translateY(-2px); /* Un leve saltito hacia arriba muy sutil */
 }
-
 /* olvidaste tu contraseña */
 /* Estado normal del enlace */
 .link-olvido {
