@@ -4,7 +4,9 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+           ¡Bienvenido, {{ trim(Auth::user()->nombre) }}!
+     </h2>
     <div class="dashboard-wrapper">
         
         <div class="dashboard-top-wrapper">
@@ -160,4 +162,5 @@
             });
         });
     </script>
+    </x-slot>
 </x-app-layout>

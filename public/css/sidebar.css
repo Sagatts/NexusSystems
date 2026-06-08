@@ -1,6 +1,9 @@
+/* =========================================
+   ESTILOS DE LA BARRA LATERAL (SIDEBAR)
+   ========================================= */
 
 .sidebar-container {
-    width: 260px; /* Ancho de la barra */
+    width: 260px; /* Ancho normal de la barra */
     min-height: 100vh;
     background-color: #ffffff;
     border-right: 1px solid #e5e7eb;
@@ -8,6 +11,11 @@
     flex-direction: column;
     justify-content: space-between;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    
+    /* Agregado para la animación de colapsar */
+    transition: width 0.3s ease-in-out;
+    overflow-x: hidden;
+    white-space: nowrap;
 }
 
 /* Zona del logo */
@@ -18,6 +26,7 @@
     justify-content: center;
     border-bottom: 1px solid #e5e7eb;
     padding: 8px;
+    transition: height 0.3s ease-in-out; /* Animación para cuando se achique */
 }
 
 .sidebar-logo {
@@ -53,7 +62,6 @@
     transform: translateX(5px); 
 }
 
-
 .sidebar-link.active {
     background-color: #ef4444; 
     color: #ffffff; 
@@ -71,4 +79,83 @@
     width: 28px;  
     height: 28px;
     object-fit: contain; 
+}
+
+
+/* =========================================
+   ESTADO COLAPSADO (CUANDO SE PRESIONA EL BURGER)
+   ========================================= */
+
+/* 1. Reducir el ancho de la barra completa */
+.sidebar-container.collapsed {
+    width: 100px; 
+}
+
+/* 2. Ocultar los textos de los botones */
+.sidebar-container.collapsed .sidebar-link span {
+    display: none;
+}
+
+/* 3. Centrar los íconos y quitar el gap/padding */
+.sidebar-container.collapsed .sidebar-link {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 0; 
+}
+
+.sidebar-container.collapsed .sidebar-link:hover {
+    transform: scale(1.05); /* En vez de moverse a la derecha, el ícono crece un poquito */
+}
+
+.sidebar-container.collapsed .sidebar-logo {
+    height: 100%; /* Puedes subir o bajar este número si lo quieres más grande o más chico */
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.sidebar-container.collapsed .sidebar-logo-wrapper {
+    height: 100px; 
+}
+
+.sidebar-container.collapsed .sidebar-logo-wrapper {
+    height: 100px; 
+}
+
+
+/* =========================================
+   ESTILOS GENERALES DEL DASHBOARD Y HEADER
+   ========================================= */
+
+/* Fondo limpio para el sistema (Gris claro original) */
+.bg-sistema {
+    background-color: #f3f4f6; 
+}
+
+/* El círculo rojo con tu inicial */
+.avatar-corporativo {
+    width: 38px;
+    height: 38px;
+    background-color: #ff3333;
+    color: white !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    border-radius: 50%;
+    font-size: 16px;
+}
+
+/* El puntito rojo de la campana */
+.punto-notificacion {
+    background-color: #ff3333;
+}
+
+/* La línea vertical sutil que separa la campana del perfil */
+.separador-header {
+    height: 55px; 
+    background-color: #6c757d; 
+    opacity: 0.25;
+    margin-left: 15px;
+    margin-right: 15px;
 }
