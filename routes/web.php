@@ -3,14 +3,17 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductoController;
+
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard',
+    [DashboardController::class, 'index']
+)->middleware(['auth'])->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {
@@ -37,8 +40,15 @@ Route::middleware(['auth', 'role:administrador'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/productos', fn() => view('admin.productos'))
-            ->name('productos');
+        Route::get(
+            'productos-datatable',
+            [ProductoController::class, 'getProductos']
+        )->name('productos.datatable');
+
+        Route::resource(
+            'productos',
+            ProductoController::class
+        );
 
         Route::get('/usuarios', fn() => view('admin.usuarios'))
             ->name('usuarios');

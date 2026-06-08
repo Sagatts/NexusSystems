@@ -10,7 +10,7 @@
     <div class="dashboard-wrapper">
         
         <div class="dashboard-top-wrapper">
-            <span class="dashboard-box-title">Gestor de reportes</span>
+            <span class="dashboard-box-title">Dashboard de ventas</span>
             
             <div class="dashboard-top-container">
                 <canvas id="graficoVentas"></canvas>
@@ -18,63 +18,41 @@
         </div>
 
         <div class="dashboard-grid">
-            
+
             <div class="dashboard-box-wrapper">
-                <span class="dashboard-box-title">Gestión de productos</span>
+                <span class="dashboard-box-title">
+                    Productos Próximos a Vencer
+                </span>
                 <div class="dashboard-box">
                     <table class="custom-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Foto</th>
-                                <th>Producto</th>
-                                <th>Precio</th>
+                                <th>Código Barras</th>
+                                <th>Nombre</th>
                                 <th>Stock</th>
+                                <th>Fecha Vencimiento</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Foto</td>
-                                <td>Carne</td>
-                                <td>$6767</td>
-                                <td>45</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Foto</td>
-                                <td>Choclo</td>
-                                <td>$100</td>
-                                <td>12</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Foto</td>
-                                <td>Vienesas</td>
-                                <td>$500</td>
-                                <td>30</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Foto</td>
-                                <td>Papas</td>
-                                <td>$50</td>
-                                <td>8</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Foto</td>
-                                <td>Arroz</td>
-                                <td>$999</td>
-                                <td>8</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>Foto</td>
-                                <td>Fideos</td>
-                                <td>$999</td>
-                                <td>4</td>
-                            </tr>
+                            @forelse($productosPorVencer as $producto)
+                                <tr>
+                                    <td>{{ $producto->codigo_barras }}</td>
+
+                                    <td>{{ $producto->nombre }}</td>
+
+                                    <td>{{ $producto->stock }}</td>
+
+                                    <td>
+                                        {{ \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        No existen productos registrados.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -135,32 +113,67 @@
     
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('graficoVentas').getContext('2d');
-            
-            new Chart(ctx, {
-                type: 'line', // Tipo de gráfico (líneas)
-                data: {
-                    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
-                    datasets: [{
-                        label: 'Ventas Mensuales',
-                        data: [120, 190, 150, 220, 180, 250, 300], // Datos falsos
-                        borderColor: '#ef4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4, 
-                        fill: true 
-                    }]
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const ctx = document.getElementById('graficoVentas');
+
+        const labels = @json($labels);
+        const datos = @json($totales);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Ventas Mensuales ($)',
+                    data: datos,
+
+                    borderColor: '#dc2626',
+                    backgroundColor: 'rgba(220,38,38,0.15)',
+
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' +
+                                    context.raw.toLocaleString('es-CL');
+                            }
+                        }
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            callback: function(value) {
+                                return '$' +
+                                    value.toLocaleString('es-CL');
+                            }
+                        }
                     }
                 }
-            });
+            }
         });
+
+    });
     </script>
-    </x-slot>
 </x-app-layout>

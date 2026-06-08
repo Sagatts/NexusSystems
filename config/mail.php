@@ -39,14 +39,13 @@ return [
 
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
-            'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'host' => env(key: 'MAIL_HOST', default: 'smtp.gmail.com'),
+            'port' => env(key: 'MAIL_PORT', default: 587),
+            'username' => env(key: 'MAIL_USERNAME', default: 'lapicadeyiyo@gmail.com'),
+            'password' => env(key: 'MAIL_PASSWORD', default: 'wmalbsrdbugzcijn'),
             'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'auth_mode' => null,
+            'encryption' => env(key: 'MAIL_INCRYPTION', default: 'tls'),
         ],
 
         'ses' => [

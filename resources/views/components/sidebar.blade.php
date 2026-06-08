@@ -11,7 +11,7 @@
                 <span>Inicio</span>
             </a>
 
-            <a href="{{ route('admin.productos') }}" class="sidebar-link {{ request()->routeIs('admin.productos') ? 'active' : '' }}" title="Gestión de Productos">
+            <a href="{{ route('admin.productos.index') }}" class="sidebar-link {{ request()->routeIs('admin.productos') ? 'active' : '' }}" title="Gestión de Productos">
                 <img src="{{ asset('img/img_sidebar/inventario.png') }}" alt="Productos" class="sidebar-icon">
                 <span>Gestión Productos</span>
             </a>
