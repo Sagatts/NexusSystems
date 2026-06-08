@@ -1,0 +1,141 @@
+/* Contenedor principal que envuelve todo el dashboard */
+.dashboard-wrapper {
+    padding: 40px;
+    max-width: 1500px;
+    margin: 0 auto; /* Centra el contenido en la pantalla */
+    font-family: sans-serif;
+    
+}
+
+/* Envuelve el título superior y su rectángulo */
+.dashboard-top-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin-bottom: 40px; /* Separación con los cuadros de abajo */
+}
+
+/* El rectángulo grande superior */
+.dashboard-top-container {
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+    position: relative; 
+    padding: 25px; 
+    box-sizing: border-box;
+    
+    transition: all 0.3s ease; /* Mantiene la animación del hover */
+    
+}
+
+.dashboard-top-container,
+.dashboard-box {
+    transition: all 0.3s ease;
+}
+
+.dashboard-top-container:hover,
+.dashboard-box:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+    
+}
+
+/* La grilla para que se ordenen 2 arriba y 2 abajo */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas del mismo tamaño */
+    gap: 40px; /* Espacio entre los cuadros */
+}
+
+/* Unión entre contenedor y título */
+.dashboard-box-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el título */
+    
+}
+
+/* El título de cada container */
+.dashboard-box-title {
+    font-size: 20px;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+/* Los contenedores cuadrados/rectangulares */
+.dashboard-box {
+    width: 100%;
+    height: 280px; 
+    background-color: #f3f4f6; 
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+
+/*--------*/
+
+
+.dashboard-box {
+    width: 100%;
+    height: 280px; 
+    border: 1px solid #9ca3af; 
+    border-radius: 8px; 
+    background-color: #ffffff; 
+    transition: all 0.3s ease;
+    
+    overflow-y: auto; /* Activa el scroll vertical */
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos tabla */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse; /* Elimina los espacios entre las celdas */
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.custom-table th, 
+.custom-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.custom-table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #6b7280;
+    position: sticky; /* Hace que la cabecera se quede fija */
+    top: 0;
+}
+
+/* Efecto Hover en las filas */
+.custom-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f3f4f6;
+}
+
+/* Etiquetas de activo de usuario (borrar si no es necesario) */
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge.active {
+    background-color: #d1fae5; /* Verde clarito */
+    color: #065f46; /* Verde oscuro */
+}
+
+.badge.inactive {
+    background-color: #fee2e2; /* Rojo clarito */
+    color: #991b1b; /* Rojo oscuro */
+}
