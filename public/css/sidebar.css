@@ -4,6 +4,7 @@
 
 .sidebar-container {
     width: 260px; /* Ancho normal de la barra */
+    flex-shrink: 0; /* EVITA QUE SE ACHIQUE POR EL CONTENIDO PRINCIPAL */
     height: 100vh;
     overflow-y: auto;
     background-color: #ffffff;

@@ -15,10 +15,10 @@
                     Inventario de Productos
                 </h4>
 
-                <button class="btn btn-success">
+                <a href="{{ route('admin.productos.create') }}" class="btn btn-success">
                     <i class="bi bi-plus-circle"></i>
                     Nuevo Producto
-                </button>
+                </a>
 
             </div>
 
