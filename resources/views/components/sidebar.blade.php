@@ -11,7 +11,7 @@
                 <span>Inicio</span>
             </a>
 
-            <a href="{{ route('admin.productos.index') }}" class="sidebar-link {{ request()->routeIs('admin.productos') ? 'active' : '' }}" title="Gestión de Productos">
+            <a href="{{ route('admin.productos.index') }}" class="sidebar-link {{ request()->routeIs('admin.productos.*') ? 'active' : '' }}" title="Gestión de Productos">
                 <img src="{{ asset('img/img_sidebar/inventario.png') }}" alt="Productos" class="sidebar-icon">
                 <span>Gestión Productos</span>
             </a>
@@ -21,7 +21,7 @@
                 <span>Gestión de Reportes</span>
             </a>
 
-            <a href="{{ route('admin.usuarios') }}" class="sidebar-link {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}" title="Gestión de Usuarios">
+            <a href="{{ route('admin.usuarios.index') }}" class="sidebar-link {{ request()->routeIs('admin.usuarios.*') ? 'active' : '' }}" title="Gestión de Usuarios">
                 <img src="{{ asset('img/img_sidebar/usuarios.png') }}" alt="Usuarios" class="sidebar-icon">
                 <span>Gestión de Usuarios</span>
             </a>
