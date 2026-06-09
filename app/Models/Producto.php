@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
-    protected $table = 'producto';
+    protected $table = 'PRODUCTO';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -18,8 +19,23 @@ class Producto extends Model
         'id_categoria'
     ];
 
+    protected $casts = [
+        'fecha_vencimiento' => 'date'
+    ];
+
     public function categoria()
     {
-        return $this->belongsTo(Categoria::class, 'id_categoria');
+        return $this->belongsTo(
+            Categoria::class,
+            'id_categoria'
+        );
+    }
+
+    public function detallesRetiro()
+    {
+        return $this->hasMany(
+            DetalleRetiro::class,
+            'id_producto'
+        );
     }
 }

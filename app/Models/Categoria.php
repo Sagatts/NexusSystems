@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Categoria extends Model
 {
     protected $table = 'CATEGORIA';
+
     public $timestamps = false;
 
-    protected $fillable = ['nombre'];
+    protected $fillable = [
+        'nombre'
+    ];
 
     public function productos()
     {

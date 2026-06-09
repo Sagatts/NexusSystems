@@ -54,6 +54,16 @@ class ProductoController extends Controller
                     </button>
                 ';
             })
+            
+            ->editColumn('fecha_vencimiento', function ($producto) {
+                return $producto->fecha_vencimiento
+                    ? $producto->fecha_vencimiento->format('d-m-Y')
+                    : '';
+            })
+
+            ->addColumn('categoria', function ($producto) {
+                return $producto->categoria->nombre;
+            })
 
             ->rawColumns(['acciones'])
 
