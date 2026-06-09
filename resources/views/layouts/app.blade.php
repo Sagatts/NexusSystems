@@ -17,21 +17,25 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
-        <link rel="stylesheet"
-        href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-
-        <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     </head>
     
     <body class="font-sans antialiased bg-sistema">
-    <div class="flex h-screen">
+    
+    <div class="d-flex" style="height: 100vh; overflow: hidden;">
         
         @include('components.sidebar')
 
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <script>
+            if (localStorage.getItem("barra_achicada") === "true") {
+                document.getElementById("sidebar").classList.add("collapsed");
+            }
+        </script>
+
+        <div class="d-flex flex-column flex-grow-1" style="overflow: hidden;">
             
-            <nav class="navbar navbar-expand navbar-light bg-white shadow-sm py-2 px-4 border-bottom-0">
+            <nav class="navbar navbar-expand navbar-light bg-white shadow-sm py-2 px-4 border-bottom-0 flex-shrink-0">
                 <div class="container-fluid">
 
                     <div class="d-flex align-items-center">
@@ -64,14 +68,14 @@
                         <li class="nav-item dropdown ms-2">
                             <a class="nav-link dropdown-toggle d-flex align-items-center text-dark text-decoration-none" href="#" id="perfilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 
-                            <div class="avatar-corporativo shadow-sm" title="{{ trim(Auth::user()->nombre) }}">
-                                {{ strtoupper(substr(trim(Auth::user()->nombre), 0, 1)) }}
-                            </div>
-                            
-                            <span class="ms-2 fw-bold text-dark">
-                                {{ trim(Auth::user()->rol ?? 'U'), 0, 1 }}
-                            </span>
-                        </a>
+                                <div class="avatar-corporativo shadow-sm" title="{{ trim(Auth::user()->nombre) }}">
+                                    {{ strtoupper(substr(trim(Auth::user()->nombre), 0, 1)) }}
+                                </div>
+                                
+                                <span class="ms-2 fw-bold text-dark text-capitalize">
+                                    {{ trim(Auth::user()->rol ?? 'Usuario') }}
+                                </span>
+                            </a>
                             
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3 rounded-3" aria-labelledby="perfilDropdown">
                                 <li><a class="dropdown-item py-2" href="{{ route('profile.edit') }}">Mi Perfil</a></li>
@@ -91,18 +95,16 @@
                 </div>
             </nav>
 
-            <main class="flex-1 overflow-y-auto p-4">
+            <main class="p-4" style="flex-grow: 1; overflow-y: auto;">
                 {{ $slot }}
             </main>
             
         </div>
     </div>
+    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
     @stack('scripts')
 
     <script>
@@ -111,22 +113,15 @@
             const sidebar = document.getElementById("sidebar");
 
             if(btnBurger && sidebar) {
-                // 1. AL CARGAR LA PÁGINA: Revisamos la memoria del navegador
-                // Si guardamos previamente que estaba colapsada, le agregamos la clase de inmediato
-                if (localStorage.getItem("barra_achicada") === "true") {
-                    sidebar.classList.add("collapsed");
-                }
-
-                // 2. AL HACER CLIC: Alternamos la clase y actualizamos la memoria
+                // Solo nos encargamos de escuchar el clic del botón
                 btnBurger.addEventListener("click", function() {
-                    // Pone o quita la clase 'collapsed'
                     sidebar.classList.toggle("collapsed");
                     
-                    // Verificamos cómo quedó la barra después del clic para guardar el estado
+                    // Actualizamos la memoria
                     if (sidebar.classList.contains("collapsed")) {
-                        localStorage.setItem("barra_achicada", "true"); // Guardar como achicada
+                        localStorage.setItem("barra_achicada", "true"); 
                     } else {
-                        localStorage.setItem("barra_achicada", "false"); // Guardar como normal
+                        localStorage.setItem("barra_achicada", "false"); 
                     }
                 });
             }
