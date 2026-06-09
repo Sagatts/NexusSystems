@@ -1,40 +1,60 @@
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
-        </h2>
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header">
+        <h5 class="mb-0">Información Personal</h5>
+    </div>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
+    <div class="card-body">
 
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
+        <form method="post" action="{{ route('profile.update') }}">
+            @csrf
+            @method('patch')
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('patch')
+            <div class="mb-3">
+                <label class="form-label">RUT</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    value="{{ Auth::user()->rut }}"
+                    readonly>
+            </div>
 
-        <div>
-            <x-input-label for="nombre" :value="__('Nombre')" />
-            <x-text-input id="nombre" name="nombre" type="text" class="mt-1 block w-full" :value="old('nombre', $user->nombre)" required autofocus autocomplete="nombre" />
-            <x-input-error class="mt-2" :messages="$errors->get('nombre')" />
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+                <input
+                    type="text"
+                    name="nombre"
+                    class="form-control"
+                    value="{{ old('nombre', Auth::user()->nombre) }}"
+                    required>
+            </div>
 
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
-</section>
+            <div class="mb-3">
+                <label class="form-label">Correo</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ old('email', Auth::user()->email) }}"
+                    required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Rol</label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    value="{{ ucfirst(Auth::user()->rol) }}"
+                    readonly>
+            </div>
+
+            <button class="btn btn-primary">
+                Guardar Cambios
+            </button>
+
+        </form>
+
+    </div>
+</div>
