@@ -45,11 +45,11 @@ class ProductoController extends Controller
 
             ->addColumn('acciones', function ($producto) {
                 return '
-                    <button class="btn btn-warning btn-sm">
+                    <a href="'.route('admin.productos.edit', $producto->id).'" class="btn btn-warning btn-sm">
                         Editar
-                    </button>
+                    </a>
 
-                    <button class="btn btn-danger btn-sm">
+                    <button class="btn btn-danger btn-sm" onclick="abrirModalEliminar(\''.$producto->id.'\')">
                         Eliminar
                     </button>
                 ';
@@ -101,9 +101,13 @@ class ProductoController extends Controller
     )
     {
         $producto->update($request->all());
-
+ 
         return redirect()
-            ->route('admin.productos.index');
+            ->route('admin.productos.index')
+            ->with(
+                'success',
+                'Producto actualizado correctamente'
+            );
     }
 
     public function destroy(Producto $producto)

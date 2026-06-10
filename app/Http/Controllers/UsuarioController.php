@@ -31,15 +31,13 @@ class UsuarioController extends Controller
                 $search = request('search')['value'] ?? '';
 
                 if (!empty($search)) {
-                    // Ahora la barra de búsqueda filtra por nombre y también por RUT
                     $query->where('nombre', 'like', "%{$search}%")
                           ->orWhere('rut', 'like', "%{$search}%");
                 }
             })
 
             ->addColumn('acciones', function ($usuario) {
-                // Mantenemos el diseño de los botones exacto al de tu compa, 
-                // pero usando $usuario->rut para las rutas
+
                 return '
                     <a href="'.route('admin.usuarios.edit', $usuario->rut).'" class="btn btn-warning btn-sm">
                         Editar
