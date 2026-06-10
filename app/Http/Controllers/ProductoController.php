@@ -11,7 +11,12 @@ class ProductoController extends Controller
 {
     public function index()
     {
-        return view('admin.productos.index');
+        $categorias = Categoria::all();
+        
+        return view(
+            'admin.productos.index', 
+            compact('categorias')
+        );
     }
 
     public function create()
@@ -24,18 +29,22 @@ class ProductoController extends Controller
         );
     }
 
-    public function getProductos()
+    public function getProductos(Request $request) 
     {
         $productos = Producto::with('categoria');
 
         return DataTables::of($productos)
 
-            ->filter(function ($query) {
+            ->filter(function ($query) use ($request) {
 
-                $search = request('search')['value'] ?? '';
+                $search = $request->input('search.value') ?? '';
 
                 if (!empty($search)) {
                     $query->where('nombre', 'like', "%{$search}%");
+                }
+
+                if ($request->has('categoria') && $request->categoria != '') {
+                    $query->where('id_categoria', $request->categoria);
                 }
             })
 
@@ -59,10 +68,6 @@ class ProductoController extends Controller
                 return $producto->fecha_vencimiento
                     ? $producto->fecha_vencimiento->format('d-m-Y')
                     : '';
-            })
-
-            ->addColumn('categoria', function ($producto) {
-                return $producto->categoria->nombre;
             })
 
             ->rawColumns(['acciones'])
