@@ -25,8 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])
         ->name('profile.update');
 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
 });
 
 
@@ -41,37 +39,41 @@ Route::middleware(['auth', 'role:administrador'])
     ->name('admin.')
     ->group(function () {
 
-    // ==========================================
-    // RUTAS DE PRODUCTOS
-    // ==========================================
-    Route::get(
-        'productos-datatable',
-        [ProductoController::class, 'getProductos']
-    )->name('productos.datatable');
+        // =========================
+        // PRODUCTOS
+        // =========================
 
-    Route::resource(
-        'productos',
-        ProductoController::class
-    );
+        Route::get(
+            'productos-datatable',
+            [ProductoController::class, 'getProductos']
+        )->name('productos.datatable');
 
-    // ==========================================
-    // RUTAS DE USUARIOS
-    // ==========================================
-    Route::get(
-        'usuarios-datatable',
-        [UsuarioController::class, 'getUsuarios']
-    )->name('usuarios.datatable');
+        Route::resource(
+            'productos',
+            ProductoController::class
+        );
 
-    Route::resource(
-        'usuarios',
-        UsuarioController::class
-    );
+        // =========================
+        // USUARIOS
+        // =========================
 
-    // ==========================================
-    // RUTAS DE REPORTES
-    // ==========================================
-    Route::get('/reportes', fn() => view('admin.reportes'))
-        ->name('reportes');
+        Route::get(
+            'usuarios-datatable',
+            [UsuarioController::class, 'getUsuarios']
+        )->name('usuarios.datatable');
+
+        Route::resource(
+            'usuarios',
+            UsuarioController::class
+        );
+
+        // =========================
+        // REPORTES
+        // =========================
+
+        Route::get('/reportes', function () {
+            return view('admin.reportes');
+        })->name('reportes');
 });
 
 /*

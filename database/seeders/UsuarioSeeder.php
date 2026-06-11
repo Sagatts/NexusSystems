@@ -13,7 +13,7 @@ class UsuarioSeeder extends Seeder
         DB::table('USUARIO')->insert([
             'rut' => '21507579-6',
             'nombre' => 'Administrador',
-            'email' => 'fernando.arriagada.22@gmail.com',
+            'email' => 'fernando.arriagada.22@alumnos.uda.cl',
             'contrasena' => Hash::make('12345678'),
             'rol' => 'administrador',
             'remember_token' => null

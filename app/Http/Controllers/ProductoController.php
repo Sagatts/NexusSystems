@@ -45,11 +45,13 @@ class ProductoController extends Controller
 
             ->addColumn('acciones', function ($producto) {
                 return '
-                    <button class="btn btn-warning btn-sm">
+                    <a href="'.route('admin.productos.edit', $producto->id).'" class="btn btn-warning btn-sm">
                         Editar
-                    </button>
+                    </a>
 
-                    <button class="btn btn-danger btn-sm">
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="abrirModalEliminar('.$producto->id.', \''.addslashes($producto->nombre).'\')">
                         Eliminar
                     </button>
                 ';
@@ -64,6 +66,8 @@ class ProductoController extends Controller
             ->addColumn('categoria', function ($producto) {
                 return $producto->categoria->nombre;
             })
+
+
 
             ->rawColumns(['acciones'])
 
@@ -84,34 +88,30 @@ class ProductoController extends Controller
 
     public function edit(Producto $producto)
     {
-        $categorias = Categoria::all();
+        $producto = Producto::findOrFail($producto->id);
 
-        return view(
-            'admin.productos.edit',
-            compact(
-                'producto',
-                'categorias'
-            )
-        );
+        $categorias = Categoria::orderBy('nombre')->get();
+
+        return view('admin.productos.edit', compact(
+            'producto',
+            'categorias'
+        ));
     }
 
-    public function update(
-        Request $request,
-        Producto $producto
-    )
+    public function update(Request $request,Producto $producto)
     {
         $producto->update($request->all());
 
         return redirect()
-            ->route('admin.productos.index');
+            ->route('admin.productos.index')
+            ->with('success', 'Producto actualizado correctamente');
     }
 
     public function destroy(Producto $producto)
     {
         $producto->delete();
-
-        return response()->json([
-            'success' => true
-        ]);
+        return redirect()
+            ->route('admin.productos.index')
+            ->with('success', 'Producto eliminado correctamente');
     }
 }
