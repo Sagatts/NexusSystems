@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -53,10 +54,13 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $usuarios = Usuario::latest('rut')->take(5)->get();
+
         return view('dashboard', compact(
             'labels',
             'totales',
-            'productosPorVencer'
+            'productosPorVencer',
+            'usuarios'
         ));
     }
 }

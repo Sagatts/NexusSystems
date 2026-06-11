@@ -35,7 +35,6 @@
 
                     <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
                             <th>Código Barras</th>
                             <th>Nombre</th>
                             <th>Precio Neto</th>
@@ -55,6 +54,44 @@
 
         </div>
 
+    </div>
+
+    <!-- Modal Eliminar -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Eliminar Producto
+                    </h5>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea eliminar el producto?
+                    <strong id="nombreProducto"></strong>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <form id="formEliminar" method="POST">
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger">
+                            Sí, eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     @push('scripts')
@@ -103,6 +140,25 @@
 
         });
     </script>
+
+    <script>
+
+        const rutaEliminarProducto = "{{ url('admin/productos') }}";
+
+        function abrirModalEliminar(id, nombre)
+        {
+            document.getElementById('nombreProducto').innerText = nombre;
+
+            document.getElementById('formEliminar').action =
+                rutaEliminarProducto + '/' + id;
+
+            new bootstrap.Modal(
+                document.getElementById('modalEliminar')
+            ).show();
+        }
+
+    </script>
+
     @endpush
 
 </x-app-layout>

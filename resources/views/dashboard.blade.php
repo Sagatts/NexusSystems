@@ -10,7 +10,7 @@
     <div class="dashboard-wrapper">
         
         <div class="dashboard-top-wrapper">
-            <span class="dashboard-box-title">Dashboard de ventas</span>
+            <span class="dashboard-box-title">Resumen de ventas mensuales</span>
             
             <div class="dashboard-top-container">
                 <canvas id="graficoVentas"></canvas>
@@ -59,47 +59,40 @@
             </div>
 
             <div class="dashboard-box-wrapper">
-                <span class="dashboard-box-title">Gestión de usuarios</span>
+                <span class="dashboard-box-title">Usuarios del Sistema</span>
+
                 <div class="dashboard-box">
                     <table class="custom-table">
                         <thead>
                             <tr>
                                 <th>RUT</th>
                                 <th>Nombre</th>
-                                <th>Apellido</th>
                                 <th>Rol</th>
-                                <th>Estado</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            <tr>
-                                <td>123</td>
-                                <td>Juan</td>
-                                <td>Pérez</td>
-                                <td>Cocina</td>
-                                <td><span class="badge active">Activo</span></td>
-                            </tr>
-                            <tr>
-                                <td>456</td>
-                                <td>María</td>
-                                <td>Soto</td>
-                                <td>Garzón</td>
-                                <td><span class="badge active">Activo</span></td>
-                            </tr>
-                            <tr>
-                                <td>789</td>
-                                <td>Pedro</td>
-                                <td>Diaz</td>
-                                <td>Garzón</td>
-                                <td><span class="badge inactive">Inactivo</span></td>
-                            </tr>
-                            <tr>
-                                <td>1234567-8</td>
-                                <td>Ana</td>
-                                <td>Vega</td>
-                                <td>Cocina</td>
-                                <td><span class="badge active">Activo</span></td>
-                            </tr>
+                            @forelse($usuarios as $usuario)
+                                <tr>
+                                    <td>{{ $usuario->rut }}</td>
+                                    <td>{{ $usuario->nombre }}</td>
+                                    <td>
+                                        @if($usuario->rol == 'administrador')
+                                            <span class="badge active">Administrador</span>
+                                        @elseif($usuario->rol == 'garzon')
+                                            <span class="badge active">Garzón</span>
+                                        @else
+                                            <span class="badge inactive">Cocina</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">
+                                        No existen usuarios registrados
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
