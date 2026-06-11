@@ -84,12 +84,12 @@
                         </div>
                     </div>
 
-                    <div class="mt-4 d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.productos.index') }}" class="btn btn-secondary">
+                    <div class="mt-4 d-flex justify-content-end gap-2 border-top pt-4">
+                        <a href="{{ route('admin.productos.index') }}" class="btn btn-secondary fw-bold shadow-sm">
                             Cancelar
                         </a>
-                        <button type="submit" class="btn btn-primary">
-                            Guardar Producto
+                        <button type="submit" class="btn btn-success fw-bold shadow-sm">
+                            <i class="bi bi-save me-1"></i> Guardar Producto
                         </button>
                     </div>
                 </form>
