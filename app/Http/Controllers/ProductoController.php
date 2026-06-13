@@ -43,6 +43,7 @@ class ProductoController extends Controller
                     $query->where('nombre', 'like', "%{$search}%");
                 }
 
+
                 if ($request->has('categoria') && $request->categoria != '') {
                     $query->where('id_categoria', $request->categoria);
                 }
@@ -58,7 +59,7 @@ class ProductoController extends Controller
                         Editar
                     </a>
 
-                    <button class="btn btn-danger btn-sm" onclick="abrirModalEliminar('.$producto->id.', \''.addslashes($producto->nombre).'\')">
+                    <button class="btn btn-danger btn-sm" onclick="abrirModalEliminar(\''.$producto->id.'\')">
                         Eliminar
                     </button>
                 ';
@@ -68,11 +69,6 @@ class ProductoController extends Controller
                 return $producto->fecha_vencimiento
                     ? $producto->fecha_vencimiento->format('d-m-Y')
                     : '';
-            })
-
-
-            ->addColumn('categoria', function ($producto) {
-                return $producto->categoria->nombre;
             })
 
             ->rawColumns(['acciones'])

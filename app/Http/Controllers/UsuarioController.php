@@ -105,12 +105,15 @@ class UsuarioController extends Controller
             );
     }
 
-    public function destroy(Usuario $usuario)
+    public function destroy($rut)
     {
+        $usuario = Usuario::where('rut', $rut)->firstOrFail();
+        
         $usuario->delete();
 
         return response()->json([
-            'success' => true
+            'success' => true,
+            'message' => 'Usuario eliminado correctamente'
         ]);
     }
 }
