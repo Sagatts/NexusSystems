@@ -76,6 +76,55 @@
                     }
                 ]
             });
+
+            // Manejar el evento de eliminación
+            window.abrirModalEliminar = function(rut) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción eliminará al usuario con RUT " + rut + " del sistema.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        
+                        // Petición silenciosa al servidor
+                        $.ajax({
+                            url: "{{ url('admin/usuarios') }}/" + rut,
+                            type: 'POST',
+                            data: {
+                                _method: 'DELETE',
+                                _token: "{{ csrf_token() }}" // Llave de seguridad de Laravel
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Eliminado!',
+                                        text: 'El usuario ha sido removido.',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    $('#tablaUsuarios').DataTable().ajax.reload();
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Hubo un error al intentar eliminar al usuario.'
+                                });
+                            }
+                        });
+
+                    }
+                });
+            }
+
         });
     </script>
     @endpush

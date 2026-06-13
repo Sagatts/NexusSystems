@@ -35,7 +35,6 @@
 
                     <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
                             <th>Código Barras</th>
                             <th>Nombre</th>
                             <th>Precio Neto</th>
