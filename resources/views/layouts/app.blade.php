@@ -20,6 +20,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+        <link rel="icon" href="{{ asset('img/logo-yiyo.png') }}" type="image/png">
     </head>
     
     <body class="font-sans antialiased bg-sistema">
@@ -110,22 +112,33 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const btnBurger = document.getElementById("btnBurger");
-            const sidebar = document.getElementById("sidebar");
+        const btnBurger = document.getElementById("btnBurger");
+        const btnClose = document.getElementById("closeSidebarBtn"); // Agregamos la "X"
+        const sidebar = document.getElementById("sidebar");
 
-            if(btnBurger && sidebar) {
-                // Solo nos encargamos de escuchar el clic del botón
-                btnBurger.addEventListener("click", function() {
-                    sidebar.classList.toggle("collapsed");
-                    
-                    // Actualizamos la memoria
-                    if (sidebar.classList.contains("collapsed")) {
-                        localStorage.setItem("barra_achicada", "true"); 
-                    } else {
-                        localStorage.setItem("barra_achicada", "false"); 
-                    }
-                });
+        // 1. Creamos una función con tu lógica original para poder reutilizarla
+        function toggleSidebar() {
+            sidebar.classList.toggle("collapsed");
+
+            // Actualizamos la memoria
+            if (sidebar.classList.contains("collapsed")) {
+                localStorage.setItem("barra_achicada", "true");
+            } else {
+                localStorage.setItem("barra_achicada", "false");
             }
+        }
+
+        if (sidebar) {
+            // 2. Le damos la orden al botón de 3 líneas (si existe)
+            if (btnBurger) {
+                btnBurger.addEventListener("click", toggleSidebar);
+            }
+            
+            // 3. Le damos la MISMA orden al botón de la X (si existe)
+            if (btnClose) {
+                btnClose.addEventListener("click", toggleSidebar);
+                }
+         }
         });
     </script>
 

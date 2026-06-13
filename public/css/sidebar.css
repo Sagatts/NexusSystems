@@ -161,3 +161,53 @@
     margin-left: 15px;
     margin-right: 15px;
 }
+
+/* --- ESTILOS DEL BOTÓN CERRAR --- */
+.sidebar-logo-wrapper {
+    position: relative; /* Agrega esto al wrapper del logo que ya tienes para que la 'X' se posicione respecto a esta caja */
+}
+
+.close-sidebar-btn {
+    display: none; /* Oculto por defecto (en PC no se ve) */
+    background: none;
+    border: none;
+    color: #4b5563; /* Gris oscuro */
+    cursor: pointer;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.close-sidebar-btn:hover {
+    color: #ef4444; /* Se pone rojo 'La Picá' al tocarlo */
+}
+
+/* --- RESPONSIVE PARA CELULARES (Pantallas menores a 768px) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Ocultamos el sidebar por completo cuando está plegado */
+    .sidebar-container.collapsed {
+        display: none !important; 
+        /* Si prefieres que se encoja con animación en vez de desaparecer de golpe, 
+           borra 'display: none' y usa: 
+           width: 0 !important; 
+           padding: 0 !important; 
+           overflow: hidden; 
+        */
+    }
+
+    .close-sidebar-btn {
+        display: block; 
+    }
+
+    /* 2. Truco extra: Cuando el sidebar ESTÉ ABIERTO en el celular, 
+       hacemos que flote por encima del contenido en vez de aplastarlo */
+    .sidebar-container {
+        position: absolute;
+        height: 100%;
+        z-index: 1050; /* Lo pone por encima de todo */
+        box-shadow: 4px 0 10px rgba(0,0,0,0.1); /* Le da una sombrita para que se note que está flotando */
+    }
+}
