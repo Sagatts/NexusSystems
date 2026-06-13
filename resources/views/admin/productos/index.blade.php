@@ -100,9 +100,14 @@
             $('#tablaProductos').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('admin.productos.datatable') }}",
+                ajax:{ 
+                    url: "{{ route('admin.productos.datatable') }}",
+                    data: function (d) {
+                        d.categoria = $('#filtro_categoria').val();
+                    }
+                },
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
                     search: "Buscar por nombre:"
                 },
                 columns: [
@@ -136,8 +141,18 @@
                         orderable: false,
                         searchable: false
                     }
-                ]
+                ],
 
+                initComplete: function() {
+                    $('#filtro_categoria').removeClass('d-none');
+
+                    $('.dataTables_filter label').before($('#filtro_categoria'));
+                }
+
+            });
+
+            $('#filtro_categoria').change(function () {
+                $('#tablaProductos').DataTable().ajax.reload();
             });
 
         });

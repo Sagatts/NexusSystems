@@ -49,8 +49,8 @@
                 ajax: "{{ route('admin.usuarios.datatable') }}",
                 
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
-                    search: "Buscar por RUT o Nombre:"
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                    search: "Buscar por nombre:"
                 },
 
                 columns: [
