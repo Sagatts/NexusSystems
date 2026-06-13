@@ -23,36 +23,33 @@
             </div>
 
             <div class="card-body p-4">
-
-                <select id="filtro_categoria" class="form-select form-select-sm d-inline-block w-auto me-3 d-none shadow-sm">
+    
+                <select id="filtro_categoria" class="form-select form-select-sm d-inline-block w-auto me-3 d-none">
                     <option value="">Todas las categorías</option>
                     @foreach($categorias as $categoria)
                         <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
                     @endforeach
                 </select>
 
-                <table id="tablaProductos" class="table table-striped table-hover align-middle w-100">
-
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Código Barras</th>
-                            <th>Nombre</th>
-                            <th>Precio Neto</th>
-                            <th>Stock</th>
-                            <th>Fecha de Vencimiento</th>
-                            <th>Categoría</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
+                <div class="table-responsive">
+                    
+                    <table id="tablaProductos" class="table table-striped table-hover align-middle w-100">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Código Barras</th>
+                                <th>Nombre</th>
+                                <th>Precio Neto</th>
+                                <th>Stock</th>
+                                <th>Fecha de Vencimiento</th>
+                                <th>Categoría</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                
+            </div> </div>
 
     </div>
 
