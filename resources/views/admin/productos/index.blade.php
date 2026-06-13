@@ -65,37 +65,60 @@
 
                 processing: true,
                 serverSide: true,
-
-                ajax: {
+                ajax:{ 
                     url: "{{ route('admin.productos.datatable') }}",
                     data: function (d) {
                         d.categoria = $('#filtro_categoria').val();
                     }
                 },
-
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
-                    search: "Buscar:"
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                    search: "Buscar por nombre:"
                 },
 
                 columns: [
-                    { data: 'id', name: 'id' },
-                    { data: 'codigo_barras', name: 'codigo_barras' },
-                    { data: 'nombre', name: 'nombre' },
-                    { data: 'precio_neto', name: 'precio_neto' },
-                    { data: 'stock', name: 'stock' },
-                    { data: 'fecha_vencimiento', name: 'fecha_vencimiento' },
-                    { data: 'categoria', name: 'categoria' },
-                    { data: 'acciones', name: 'acciones', orderable: false, searchable: false }
+                    {
+                        data: 'codigo_barras',
+                        name: 'codigo_barras'
+                    },
+                    {
+                        data: 'nombre',
+                        name: 'nombre'
+                    },
+                    {
+                        data: 'precio_neto',
+                        name: 'precio_neto'
+                    },
+                    {
+                        data: 'stock',
+                        name: 'stock'
+                    },
+                    {
+                        data: 'fecha_vencimiento',
+                        name: 'fecha_vencimiento'
+                    },
+                    {
+                        data: 'categoria',
+                        name: 'categoria'
+                    },
+                    {
+                        data: 'acciones',
+                        name: 'acciones',
+                        orderable: false,
+                        searchable: false
+                    }
                 ],
 
-
-                initComplete: function () {
+                initComplete: function() {
                     $('#filtro_categoria').removeClass('d-none');
-                    
+
                     $('.dataTables_filter label').before($('#filtro_categoria'));
                 }
 
+            });
+
+            $('#filtro_categoria').change(function () {
+                $('#tablaProductos').DataTable().ajax.reload();
             });
 
             $('#filtro_categoria').change(function(){
