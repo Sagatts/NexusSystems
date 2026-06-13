@@ -22,18 +22,25 @@
             </div>
 
             <div class="card-body">
-                <table id="tablaUsuarios" class="table table-striped table-hover align-middle w-100">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>RUT</th>
-                            <th>Nombre Completo</th>
-                            <th>Rol</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+    
+                <!-- NUEVO: Envolvemos la tabla en este div -->
+                <div class="table-responsive">
+                    
+                    <table id="tablaUsuarios" class="table table-striped table-hover align-middle w-100">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>RUT</th>
+                                <th>Nombre Completo</th>
+                                <th>Rol</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         </tbody>
-                </table>
+                    </table>
+                    
+                </div> <!-- Cierre del div table-responsive -->
+
             </div>
             
         </div>
