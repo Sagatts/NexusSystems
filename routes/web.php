@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ReporteController;
 
 
 Route::get('/', function () {
@@ -71,9 +72,10 @@ Route::middleware(['auth', 'role:administrador'])
         // REPORTES
         // =========================
 
-        Route::get('/reportes', function () {
-            return view('admin.reportes');
-        })->name('reportes');
+        Route::get(
+            '/reportes',
+            [ReporteController::class, 'index']
+        )->name('reportes');
 });
 
 /*

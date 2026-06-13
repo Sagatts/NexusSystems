@@ -139,3 +139,12 @@
     background-color: #fee2e2; /* Rojo clarito */
     color: #991b1b; /* Rojo oscuro */
 }
+
+.grafico-container {
+    height: 300px;
+    position: relative;
+}
+
+.grafico-container canvas {
+    max-height: 300px !important;
+}
