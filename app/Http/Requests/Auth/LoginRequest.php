@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\ValidarRut;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,7 +29,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rut' => ['required', 'string'],
+            'rut' => ['required', 'string', new ValidarRut()],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,7 +43,10 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt(['rut' => $this->rut, 'password' => $this->password], $this->boolean('remember'))) {
+        // Normalizar RUT (remover puntos)
+        $rutNormalizado = $this->normalizarRut($this->rut);
+
+        if (! Auth::attempt(['rut' => $rutNormalizado, 'password' => $this->password], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -82,5 +86,13 @@ class LoginRequest extends FormRequest
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('rut')).'|'.$this->ip());
+    }
+
+    /**
+     * Normalizar RUT removiendo puntos y espacios
+     */
+    private function normalizarRut(string $rut): string
+    {
+        return str_replace(['.', ' '], '', $rut);
     }
 }

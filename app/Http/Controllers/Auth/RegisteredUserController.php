@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
+use App\Rules\ValidarRut;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,15 +32,18 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'rut' => ['required', 'string', 'max:12', 'unique:'.Usuario::class],
+            'rut' => ['required', 'string', 'max:12', 'unique:'.Usuario::class, new ValidarRut()],
             'nombre' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.Usuario::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'rol' => ['required', 'in:administrador,garzon,cocina'],
         ]);
 
+        // Normalizar RUT (remover puntos)
+        $rutNormalizado = str_replace(['.', ' '], '', $request->rut);
+
         $user = Usuario::create([
-            'rut' => $request->rut,
+            'rut' => $rutNormalizado,
             'nombre' => $request->nombre,
             'email' => $request->email,
             'contrasena' => Hash::make($request->password),
