@@ -18,8 +18,8 @@
         </div>
 
         <div class="dashboard-grid">
-            <div class="col-lg-6">
-                <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="col-lg-12 ">
+                <div class="card shadow p-3 mb-5 bg-white rounded-4">
                     <div class="card-header bg-white">
                         <h5 class="fw-bold mb-0">
                             Top 5 Productos Más Retirados
@@ -33,8 +33,8 @@
             </div>
 
             <!-- Ventas por categoría -->
-            <div class="col-lg-6">
-                <div class="card shadow-sm border-0 rounded-4 h-100">
+            <div class="col-lg-12">
+                <div class="card shadow p-3 mb-5 bg-white rounded-4">
                     <div class="card-header bg-white">
                         <h5 class="fw-bold mb-0">
                             Ventas por Categoría

@@ -1,7 +1,7 @@
 /* Contenedor principal que envuelve todo el dashboard */
 .dashboard-wrapper {
     padding: 40px;
-    max-width: 1500px;
+    max-width: 1700px;
     margin: 0 auto; /* Centra el contenido en la pantalla */
     font-family: sans-serif;
     
