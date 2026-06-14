@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Usuario;
+use App\Rules\ValidarCorreo;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -22,6 +23,14 @@ class ProfileUpdateRequest extends FormRequest
                 'string',
                 'max:100',
                 Rule::unique(Usuario::class)->ignore($this->user()->id),
+            ],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'max:255',
+                Rule::unique(Usuario::class)->ignore($this->user()->id),
+                new ValidarCorreo(),
             ],
         ];
     }

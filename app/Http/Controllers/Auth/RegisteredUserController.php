@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use App\Rules\ValidarRut;
+use App\Rules\ValidarCorreo;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,7 +35,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'rut' => ['required', 'string', 'max:12', 'unique:'.Usuario::class, new ValidarRut()],
             'nombre' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.Usuario::class],
+            'email' => ['required', 'string', 'lowercase', 'max:255', 'unique:'.Usuario::class, new ValidarCorreo()],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'rol' => ['required', 'in:administrador,garzon,cocina'],
         ]);
