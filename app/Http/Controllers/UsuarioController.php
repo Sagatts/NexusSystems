@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
@@ -54,11 +55,11 @@ class UsuarioController extends Controller
             ->make(true);
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
         
-        // Buena práctica de seguridad: encriptar la contraseña antes de guardar en la BD
+        // Encriptar la contraseña antes de guardar en la BD
         if (!empty($data['contrasena'])) {
             $data['contrasena'] = Hash::make($data['contrasena']);
         }
@@ -82,11 +83,11 @@ class UsuarioController extends Controller
     }
 
     public function update(
-        Request $request,
+        UserRequest $request,
         Usuario $usuario
     )
     {
-        $data = $request->all();
+        $data = $request->validated();
 
         // Si se ingresó una nueva contraseña, la encriptamos. Si no, la ignoramos.
         if (!empty($data['contrasena'])) {
