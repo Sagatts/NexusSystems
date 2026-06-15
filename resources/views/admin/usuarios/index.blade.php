@@ -22,11 +22,8 @@
             </div>
 
             <div class="card-body">
-    
-                <!-- NUEVO: Envolvemos la tabla en este div -->
-                <div class="table-responsive">
                     
-                    <table id="tablaUsuarios" class="table table-striped table-hover align-middle w-100">
+                    <table id="tablaUsuarios" class="table table-striped table-hover align-middle text-nowrap" style="width: 100%;">
                         <thead class="table-dark">
                             <tr>
                                 <th>RUT</th>
@@ -38,8 +35,6 @@
                         <tbody>
                         </tbody>
                     </table>
-                    
-                </div> <!-- Cierre del div table-responsive -->
 
             </div>
             
@@ -47,9 +42,48 @@
     </div>
 
     @push('scripts')
+
+    <style>
+        /* 1. Muro de contención: evita que el contenedor general rompa la tarjeta blanca */
+        .dataTables_wrapper {
+            max-width: 100%;
+            overflow-x: hidden; 
+        }
+
+        /* 2. Permite que SOLO la tabla interna tenga su scroll lateral */
+        .dataTables_scrollBody {
+            overflow-x: auto !important;
+            width: 100% !important;
+        }
+
+        /* 3. Estilos responsivos para que el buscador se ordene en celulares */
+        @media (max-width: 768px) {
+            .dataTables_filter {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left !important;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            .dataTables_filter label {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            }
+            .dataTables_filter input {
+                margin-left: 0 !important;
+                margin-top: 6px;
+                width: 100% !important;
+            }
+        }
+    </style>
+
     <script>
         $(document).ready(function () {
             $('#tablaUsuarios').DataTable({
+
+                scrollX: true,
                 processing: true,
                 serverSide: true,
                 // Ruta que devolverá el JSON con los usuarios

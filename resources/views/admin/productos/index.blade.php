@@ -31,33 +31,75 @@
                     @endforeach
                 </select>
 
-                <div class="table-responsive">
-                    
-                    <table id="tablaProductos" class="table table-striped table-hover align-middle w-100">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Código Barras</th>
-                                <th>Nombre</th>
-                                <th>Precio Neto</th>
-                                <th>Stock</th>
-                                <th>Fecha de Vencimiento</th>
-                                <th>Categoría</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
                 
-            </div> </div>
+                    
+                <table id="tablaProductos" class="table table-striped table-hover align-middletext-nowrap" style="width: 100%;">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Código Barras</th>
+                            <th>Nombre</th>
+                            <th>Precio Neto</th>
+                            <th>Stock</th>
+                            <th>Fecha de Vencimiento</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                
+            </div>
 
     </div>
 
     @push('scripts')
+
+    <style>
+        /* NUEVO: Obliga a todo el contenedor de DataTables a respetar los bordes de la tarjeta */
+        .dataTables_wrapper {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        .dataTables_scrollBody {
+            overflow-x: auto !important;
+            width: 100% !important;
+        }
+
+        @media (max-width: 768px) {
+            .dataTables_filter {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left !important;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            #filtro_categoria {
+                width: 100% !important;
+                margin-bottom: 12px;
+                margin-right: 0 !important;
+            }
+            .dataTables_filter label {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            }
+            .dataTables_filter input {
+                margin-left: 0 !important;
+                margin-top: 6px;
+                width: 100% !important;
+            }
+        }
+    </style>
+
+    
     <script>
         $(document).ready(function () {
 
             let tabla = $('#tablaProductos').DataTable({
+
+                scrollX: true,
 
                 processing: true,
                 serverSide: true,
