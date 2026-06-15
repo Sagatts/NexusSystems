@@ -112,11 +112,18 @@ class ProductoController extends Controller
             );
     }
 
-    public function destroy(Producto $producto)
+    public function destroy($id)
     {
+        // Buscamos el producto
+        $producto = Producto::findOrFail($id);
+        
+        // Lo eliminamos de la base de datos
         $producto->delete();
-        return redirect()
-            ->route('admin.productos.index')
-            ->with('success', 'Producto eliminado correctamente');
+
+        // Le respondemos al AJAX que todo salió bien
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto eliminado correctamente'
+        ]);
     }
 }

@@ -121,6 +121,55 @@
                 tabla.ajax.reload();
             });
 
+            // 3. Función para Eliminar con SweetAlert
+            window.abrirModalEliminar = function(id) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción eliminará el producto del inventario de forma permanente.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        
+                        $.ajax({
+                            // Usamos url() de Laravel para armar la ruta hacia el destroy
+                            url: "{{ url('admin/productos') }}/" + id,
+                            type: 'POST',
+                            data: {
+                                _method: 'DELETE',
+                                _token: "{{ csrf_token() }}" // Token de seguridad obligatorio
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Eliminado!',
+                                        text: 'El producto ha sido removido.',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    // Recarga la tabla al instante
+                                    tabla.ajax.reload();
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Hubo un error al intentar eliminar el producto.'
+                                });
+                            }
+                        });
+
+                    }
+                });
+            }
+
         });
     </script>
     @endpush
