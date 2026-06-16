@@ -20,7 +20,7 @@
             </div>
             <div class="card-body">
     
-                <div class="table-responsive">
+                
                     
                     <table id="tablaMovimientos" class="table table-striped table-hover align-middle w-100">
                         <thead class="table-dark">
@@ -51,7 +51,7 @@
                         </tbody>
                     </table>
 
-            </div></div>
+            </div>
         </div>
     </div>
 </div>
@@ -59,10 +59,32 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 @push('scripts')
+
+<style>
+        @media (max-width: 768px) {
+            .dataTables_filter {
+                text-align: left !important;
+                margin-top: 15px;
+            }
+            .dataTables_filter label {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            }
+            .dataTables_filter input {
+                margin-left: 0 !important;
+                margin-top: 8px;
+                width: 100% !important;
+            }
+        }
+</style>
 <script>
+
 $(document).ready(function () {
 
     $('#tablaMovimientos').DataTable({
+
+        scrollX: true,
 
         pageLength: 10,
 
