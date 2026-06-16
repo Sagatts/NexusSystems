@@ -223,6 +223,6 @@ routes/
 
 ## Autor
 
-Proyecto desarrollado para la asignatura de Ingeniería de Software.
+Proyecto desarrollado para la asignatura de Proyecto de Software.
 
 **Equipo NexusSystems**
