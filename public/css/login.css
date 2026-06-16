@@ -14,6 +14,11 @@ body {
     justify-content: center;
 }
 
+.logo-login {
+    max-height: 160px;
+    /* Por si acaso la imagen tiene algún borde invisible o espacio extra que la descuadre */
+    object-fit: contain; 
+}
 
 
 /* El color normal del botón */
@@ -41,4 +46,21 @@ body {
 .link-olvido:hover {
     color: #343a40; /* Se oscurece para indicar que es clickeable */
     text-decoration: underline; /* Aparece la línea clásica de enlace */
+}
+
+/* Estilo para mostrar contraseña*/
+/* public/css/login.css */
+
+.input-password-padded {
+    padding-right: 40px;
+}
+
+.icon-ojito {
+    right: 12px; 
+    top: 50%; /* Lo manda a la mitad exacta del input */
+    transform: translateY(-50%); /* Lo corrige para que el centro del ícono sea el centro del input */
+    cursor: pointer; 
+    z-index: 10; 
+    color: #6c757d; 
+    font-size: 1.15rem;
 }

@@ -5,9 +5,9 @@
             <div class="text-center mb-4">
                 <img src="{{ asset('img/logo-yiyo.png') }}"
                      alt="Logo La Picá de Yiyo"
-                     class="img-fluid"
-                     style="max-height: 160px;">
-                <h5 class="text-center mb-4 text-secondary">
+                     class="img-fluid mx-auto d-block logo-login">
+                     
+                <h5 class="text-center text-secondary">
                     Acceso al Sistema
                 </h5>
             </div>
@@ -19,7 +19,6 @@
             <form method="POST" action="{{ route('login') }}">
                 @csrf
 
-                <!-- RUT -->
                 <div class="mb-3 text-start">
                     <label for="rut" class="form-label fw-bold">
                         RUT
@@ -42,29 +41,33 @@
                     @enderror
                 </div>
 
-                <!-- Contraseña -->
                 <div class="mb-2 text-start">
                     <label for="password" class="form-label fw-bold">
                         Contraseña
                     </label>
 
-                    <input
-                        id="password"
-                        type="password"
-                        class="form-control @error('password') is-invalid @enderror"
-                        name="password"
-                        required
-                        autocomplete="current-password"
-                    >
+                    <div class="position-relative">
+                        <input
+                            id="password"
+                            type="password"
+                            class="form-control input-password-padded @error('password') is-invalid @enderror"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                        >
+
+                        <i class="bi bi-eye-slash position-absolute icon-ojito" 
+                           id="btnTogglePassword" 
+                           title="Mostrar contraseña"></i>
+                    </div>
 
                     @error('password')
-                        <div class="invalid-feedback">
+                        <div class="invalid-feedback d-block mt-1">
                             {{ $message }}
                         </div>
                     @enderror
                 </div>
 
-                <!-- Recordarme -->
                 <div class="form-check mb-3 text-start">
                     <input
                         class="form-check-input"
@@ -77,7 +80,6 @@
                     </label>
                 </div>
 
-                <!-- Recuperar contraseña -->
                 <div class="mb-4 text-end">
                     @if (Route::has('password.request'))
                         <a class="link-olvido small"
@@ -87,7 +89,6 @@
                     @endif
                 </div>
 
-                <!-- Botón -->
                 <div class="d-grid gap-2">
                     <button
                         type="submit"
@@ -100,4 +101,29 @@
 
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnToggle = document.getElementById('btnTogglePassword');
+            const inputPassword = document.getElementById('password');
+
+            if (btnToggle && inputPassword) {
+                btnToggle.addEventListener('click', function () {
+                    if (inputPassword.type === 'password') {
+                        // Cambia a texto visible
+                        inputPassword.type = 'text';
+                        btnToggle.classList.remove('bi-eye-slash');
+                        btnToggle.classList.add('bi-eye');
+                        btnToggle.setAttribute('title', 'Ocultar contraseña');
+                    } else {
+                        // Vuelve a ocultar
+                        inputPassword.type = 'password';
+                        btnToggle.classList.remove('bi-eye');
+                        btnToggle.classList.add('bi-eye-slash');
+                        btnToggle.setAttribute('title', 'Mostrar contraseña');
+                    }
+                });
+            }
+        });
+    </script>
 </x-guest-layout>
