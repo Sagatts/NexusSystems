@@ -143,24 +143,28 @@
 
     
     
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-        const ctx = document.getElementById('graficoVentas');
+    // ==========================
+    // RESUMEN DE VENTAS MENSUALES
+    // ==========================
 
-        const labels = @json($labels);
-        const datos = @json($totales);
+    const ventasCtx = document.getElementById('graficoVentas');
 
-        new Chart(ctx, {
+    if (ventasCtx) {
+        new Chart(ventasCtx, {
             type: 'line',
+
             data: {
-                labels: labels,
+                labels: @json($labels),
+
                 datasets: [{
                     label: 'Ventas Mensuales ($)',
-                    data: datos,
+                    data: @json($totales),
 
-                    borderColor: '#dc2626',
-                    backgroundColor: 'rgba(220,38,38,0.15)',
+                    borderColor: '#ff3333',
+                    backgroundColor: 'rgba(255, 51, 51, 0.15)',
 
                     borderWidth: 3,
                     tension: 0.4,
@@ -204,81 +208,8 @@
                 }
             }
         });
+    }
 
-    });
-    </script>
-    <script>
-    // ==========================
-    // RESUMEN DE VENTAS MENSUALES
-    // ==========================
-
-    const ventasCtx =
-        document.getElementById('graficoVentas');
-
-    new Chart(ventasCtx, {
-
-        type: 'line',
-
-        data: {
-
-            labels: @json($labels),
-
-            datasets: [{
-                label: 'Ventas Mensuales ($)',
-
-                data: @json($totales),
-
-                borderColor: '#ff3333',
-                backgroundColor: 'rgba(255, 51, 51, 0.15)',
-
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-
-                pointRadius: 5,
-                pointHoverRadius: 8
-            }]
-        },
-
-        options: {
-
-            responsive: true,
-            maintainAspectRatio: false,
-
-            plugins: {
-
-                legend: {
-                    display: true
-                },
-
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return '$' +
-                                context.raw.toLocaleString('es-CL');
-                        }
-                    }
-                }
-            },
-
-            scales: {
-
-                y: {
-                    beginAtZero: true,
-
-                    ticks: {
-                        callback: function(value) {
-                            return '$' +
-                                value.toLocaleString('es-CL');
-                        }
-                    }
-                }
-            }
-        }
-    });
-
-</script>
-<script>
 
     // ==========================
     // PRODUCTOS MÁS / MENOS RETIRADOS
@@ -293,75 +224,71 @@
     const ctxProductos =
         document.getElementById('graficoProductos');
 
-    const graficoProductos = new Chart(ctxProductos, {
+    let graficoProductos = null;
 
-        type: 'bar',
+    if (ctxProductos) {
 
-        data: {
+        graficoProductos = new Chart(ctxProductos, {
 
-            labels: labelsMas,
+            type: 'bar',
 
-            datasets: [{
-                label: 'Cantidad Retirada',
+            data: {
+                labels: labelsMas,
 
-                data: datosMas,
+                datasets: [{
+                    label: 'Cantidad Retirada',
 
-                backgroundColor: '#ff3333',
-                borderColor: '#e62e2e',
-                borderWidth: 1,
-                borderRadius: 8
-            }]
-        },
+                    data: datosMas,
 
-        options: {
-
-            indexAxis: 'y',
-
-            responsive: true,
-
-            plugins: {
-                legend: {
-                    display: false
-                }
+                    backgroundColor: '#ff3333',
+                    borderColor: '#e62e2e',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
             },
 
-            scales: {
-                x: {
-                    beginAtZero: true
+            options: {
+                indexAxis: 'y',
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
+        });
+    }
 
-    });
 
-    // Selector Más/Menos retirados
+    // Selector Más / Menos retirados
 
     document.getElementById('tipoGraficoProductos')
         ?.addEventListener('change', function () {
 
+            if (!graficoProductos) return;
+
             if (this.value === 'mas') {
 
                 graficoProductos.data.labels = labelsMas;
-
                 graficoProductos.data.datasets[0].data = datosMas;
-
-                graficoProductos.data.datasets[0].backgroundColor =
-                    '#ff3333';
-
-                graficoProductos.data.datasets[0].borderColor =
-                    '#e62e2e';
+                graficoProductos.data.datasets[0].backgroundColor = '#ff3333';
+                graficoProductos.data.datasets[0].borderColor = '#e62e2e';
 
             } else {
 
                 graficoProductos.data.labels = labelsMenos;
-
                 graficoProductos.data.datasets[0].data = datosMenos;
-
-                graficoProductos.data.datasets[0].backgroundColor =
-                    '#374151';
-
-                graficoProductos.data.datasets[0].borderColor =
-                    '#1f2937';
+                graficoProductos.data.datasets[0].backgroundColor = '#374151';
+                graficoProductos.data.datasets[0].borderColor = '#1f2937';
             }
 
             graficoProductos.update();
@@ -375,70 +302,72 @@
     const ctxCategorias =
         document.getElementById('graficoCategorias');
 
-    new Chart(ctxCategorias, {
+    if (ctxCategorias) {
 
-        type: 'bar',
+        new Chart(ctxCategorias, {
 
-        data: {
+            type: 'bar',
 
-            labels: @json($labelsCategorias),
+            data: {
 
-            datasets: [{
-                label: 'Ventas ($)',
+                labels: @json($labelsCategorias),
 
-                data: @json($totalesCategorias),
+                datasets: [{
+                    label: 'Ventas ($)',
 
-                backgroundColor: '#ff3333',
-                borderColor: '#e62e2e',
-                borderWidth: 1,
-                borderRadius: 8
-            }]
-        },
+                    data: @json($totalesCategorias),
 
-        options: {
-
-            indexAxis: 'y',
-
-            responsive: true,
-
-            plugins: {
-
-                legend: {
-                    display: false
-                },
-
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-
-                            return '$' +
-                                context.raw.toLocaleString('es-CL');
-
-                        }
-                    }
-                }
+                    backgroundColor: '#ff3333',
+                    borderColor: '#e62e2e',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
             },
 
-            scales: {
+            options: {
 
-                x: {
+                indexAxis: 'y',
 
-                    beginAtZero: true,
+                responsive: true,
+                maintainAspectRatio: false,
 
-                    ticks: {
+                plugins: {
 
-                        callback: function(value) {
+                    legend: {
+                        display: false
+                    },
 
-                            return '$' +
-                                value.toLocaleString('es-CL');
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
 
+                                return '$' +
+                                    context.raw.toLocaleString('es-CL');
+
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+
+                    x: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+                            callback: function(value) {
+                                return '$' +
+                                    value.toLocaleString('es-CL');
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
+});
 </script>
 
 </x-app-layout>
