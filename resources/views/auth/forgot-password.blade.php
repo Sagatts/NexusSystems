@@ -3,7 +3,9 @@
         <div class="card-body p-4 p-md-5">
             
             <div class="text-center mb-4">
-                <img src="{{ asset('img/logo-yiyo.png') }}" alt="Logo La Picá de Yiyo" class="img-fluid" style="max-height: 160px;">
+                <img src="{{ asset('img/logo-yiyo.png') }}"
+                     alt="Logo La Picá de Yiyo"
+                     class="img-fluid mx-auto d-block logo-login">
             </div>
 
             <div class="mb-4 text-muted small text-start">

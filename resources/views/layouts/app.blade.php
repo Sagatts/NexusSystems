@@ -55,15 +55,52 @@
 
                     <ul class="navbar-nav ms-auto align-items-center flex-row">
 
-                        <li class="nav-item me-3">
-                            <a class="nav-link position-relative mt-1" href="#" role="button">
+                        <li class="nav-item dropdown me-3">
+                            <a class="nav-link position-relative mt-1 text-decoration-none" href="#" id="campanaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#6c757d" class="bi bi-bell" viewBox="0 0 16 16">
                                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.252 3 8.188 3 6a5 5 0 0 1 10 0c0 2.188.32 4.252 1.22 6z"/>
                                 </svg>
-                                <span class="position-absolute top-25 start-75 translate-middle p-1 rounded-circle punto-notificacion">
-                                    <span class="visually-hidden">Nuevas alertas</span>
-                                </span>
+                                
+                                @if(isset($conteoAlertas) && $conteoAlertas > 0)
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+                                        {{ $conteoAlertas }}
+                                        <span class="visually-hidden">Nuevas alertas</span>
+                                    </span>
+                                @endif
                             </a>
+
+                            <div class="dropdown-menu dropdown-menu-end shadow border-0 mt-3 p-0" aria-labelledby="campanaDropdown" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                                <div class="bg-light px-3 py-2 border-bottom fw-bold text-secondary" style="font-size: 0.85rem;">
+                                    Alertas del Sistema
+                                </div>
+                                
+                                @if(isset($alertas) && $alertas->count() > 0)
+                                    @foreach($alertas as $alerta)
+                                        <div class="dropdown-item py-3 border-bottom text-wrap" style="cursor: default;">
+                                            <div class="d-flex w-100 justify-content-between mb-1">
+                                                <h6 class="mb-0 fw-bold" style="font-size: 0.85rem;">
+                                                    @php
+                                                        $badgeColor = 'bg-warning'; // Amarillo por defecto
+                                                        if($alerta['tipo'] == 'stock') $badgeColor = 'bg-danger'; // Stock crítico es rojo
+                                                        if($alerta['tipo'] == 'vencimiento' && str_contains($alerta['mensaje'], 'VENCIDO')) $badgeColor = 'bg-dark'; // Vencido es negro
+                                                    @endphp
+                                                    <span class="badge {{ $badgeColor }} me-1">{{ strtoupper($alerta['tipo']) }}</span>
+                                                    {{ $alerta['titulo'] }}
+                                                </h6>
+                                            </div>
+                                            <p class="mb-0 text-muted mt-1" style="font-size: 0.8rem;">
+                                                <i class="bi bi-info-circle me-1"></i>{{ $alerta['mensaje'] }}
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-center p-4 text-muted">
+                                        <i class="bi bi-check2-circle fs-3 text-success d-block mb-2"></i>
+                                        <span class="fw-bold" style="font-size: 0.9rem;">Todo bajo control</span>
+                                        <p class="mb-0 mt-1" style="font-size: 0.8rem;">No hay productos críticos.</p>
+                                    </div>
+                                @endif
+                            </div>
                         </li>
 
                         <div class="vr mx-2 text-muted separador-header"></div>
