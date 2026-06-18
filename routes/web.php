@@ -54,6 +54,10 @@ Route::middleware(['auth', 'role:administrador'])
             ProductoController::class
         );
 
+        Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('admin.productos.update');
+
+        Route::get('/productos/verificar-codigo', [ProductoController::class, 'verificarCodigo']);
+
         // =========================
         // USUARIOS
         // =========================

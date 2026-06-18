@@ -9,9 +9,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class NewPasswordController extends Controller
 {
@@ -38,7 +38,10 @@ class NewPasswordController extends Controller
             'password' => [
                 'required',
                 'confirmed',
-                Rules\Password::defaults(),
+                PasswordRule::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
             ],
         ]);
 
@@ -60,11 +63,9 @@ class NewPasswordController extends Controller
             }
         );
 
-        return $status == Password::PASSWORD_RESET
-
+        return $status === Password::PASSWORD_RESET
             ? redirect()->route('login')
                 ->with('status', __($status))
-
             : back()
                 ->withInput($request->only('email'))
                 ->withErrors([

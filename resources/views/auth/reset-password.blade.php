@@ -11,7 +11,7 @@
                 Ingresa tu nueva contraseña para recuperar el acceso a tu cuenta.
             </div>
 
-            <form method="POST" action="{{ route('password.store') }}">
+            <form  id="resetPasswordForm" method="POST" action="{{ route('password.store') }}">
                 @csrf
 
                 <!-- Token de recuperación (Oculto) -->
@@ -86,11 +86,12 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                <div id="password-match-message" class="small mt-1"></div>
 
                 <!-- Botón -->
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn text-white fw-bold py-2 btn-corporativo">
-                        Restablecer Contraseña
+                    <button type="submit" id="submitBtn" class="btn text-white fw-bold py-2 btn-corporativo">
+                    Restablecer Contraseña
                     </button>
                 </div>
             </form>
