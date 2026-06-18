@@ -144,68 +144,34 @@
     
     
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
 
-        const ctx = document.getElementById('graficoVentas');
-
-        const labels = @json($labels);
-        const datos = @json($totales);
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Ventas Mensuales ($)',
-                    data: datos,
-
-                    borderColor: '#dc2626',
-                    backgroundColor: 'rgba(220,38,38,0.15)',
-
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-
-                    pointRadius: 5,
-                    pointHoverRadius: 8
-                }]
+        plugins: {
+            legend: {
+                display: true
             },
 
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-
-                plugins: {
-                    legend: {
-                        display: true
-                    },
-
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return '$' +
-                                    context.raw.toLocaleString('es-CL');
-                            }
-                        }
-                    }
-                },
-
-                scales: {
-                    y: {
-                        beginAtZero: true,
-
-                        ticks: {
-                            callback: function(value) {
-                                return '$' +
-                                    value.toLocaleString('es-CL');
-                            }
-                        }
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return '$' +
+                            context.raw.toLocaleString('es-CL');
                     }
                 }
             }
-        });
+        },
 
-    });
+        scales: {
+            y: {
+                beginAtZero: true,
+
+                ticks: {
+                    callback: function(value) {
+                        return '$' +
+                            value.toLocaleString('es-CL');
+                    }
+                }
+            }
+        },
     </script>
     <script>
     // ==========================
