@@ -17,125 +17,124 @@
             </div>
         </div>
 
-        <div class="dashboard-grid">
-            <div class="col-lg-12 ">
-                <div class="card shadow p-3 mb-5 bg-white rounded-4">
-                    <div class="card-header bg-white">
-                        <h5 class="fw-bold mb-0">
-                            Top 5 Productos Más Retirados
-                        </h5>
+        <div class="row g-4 mb-4">
+            
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Top 5 Productos Más Retirados
+                    </span>
+                    <div class="dashboard-box p-3 flex-grow-1">
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <canvas id="graficoProductos"></canvas>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="card-body">
-                        <canvas id="graficoProductos"></canvas>
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Ventas por Categoría
+                    </span>
+                    <div class="dashboard-box p-3 flex-grow-1">
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <canvas id="graficoCategorias"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Productos Próximos a Vencer
+                    </span>
+                    <div class="dashboard-box flex-grow-1">
+                        <div class="table-responsive">
+                            <table class="custom-table table table-hover align-middle text-nowrap w-100 mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Código Barras</th>
+                                        <th>Nombre</th>
+                                        <th>Stock</th>
+                                        <th>Fecha Vencimiento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($productosPorVencer as $producto)
+                                        <tr>
+                                            <td>{{ $producto->codigo_barras }}</td>
+                                            <td>{{ $producto->nombre }}</td>
+                                            <td>{{ $producto->stock }}</td>
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                No existen productos registrados.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Ventas por categoría -->
-            <div class="col-lg-12">
-                <div class="card shadow p-3 mb-5 bg-white rounded-4">
-                    <div class="card-header bg-white">
-                        <h5 class="fw-bold mb-0">
-                            Ventas por Categoría
-                        </h5>
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Productos con Stock Crítico
+                    </span>
+                    <div class="dashboard-box flex-grow-1">
+                        <div class="table-responsive">
+                            <table class="custom-table table table-hover align-middle text-nowrap w-100 mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Código Barras</th>
+                                        <th>Nombre</th>
+                                        <th>Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($productosStockMinimo as $producto)
+                                        <tr>
+                                            <td>{{ $producto->codigo_barras }}</td>
+                                            <td>{{ $producto->nombre }}</td>
+                                            <td>
+                                                @if($producto->stock <= 10)
+                                                    <span class="badge bg-danger">
+                                                        {{ $producto->stock }}
+                                                    </span>
+                                                @elseif($producto->stock <= 20)
+                                                    <span class="badge bg-warning text-dark">
+                                                        {{ $producto->stock }}
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-success">
+                                                        {{ $producto->stock }}
+                                                    </span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center py-4">
+                                                No existen productos registrados
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-                    <div class="card-body">
-                        <canvas id="graficoCategorias"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="dashboard-box-wrapper">
-                <span class="dashboard-box-title">
-                    Productos Próximos a Vencer
-                </span>
-                <div class="dashboard-box">
-                    <table class="custom-table">
-                        <thead>
-                            <tr>
-                                <th>Código Barras</th>
-                                <th>Nombre</th>
-                                <th>Stock</th>
-                                <th>Fecha Vencimiento</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($productosPorVencer as $producto)
-                                <tr>
-                                    <td>{{ $producto->codigo_barras }}</td>
-
-                                    <td>{{ $producto->nombre }}</td>
-
-                                    <td>{{ $producto->stock }}</td>
-
-                                    <td>
-                                        {{ \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">
-                                        No existen productos registrados.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
-            <div class="dashboard-box-wrapper">
-                <span class="dashboard-box-title">
-                    Productos con Stock Crítico
-                </span>
-
-                <div class="dashboard-box">
-                    <table class="custom-table">
-                        <thead>
-                            <tr>
-                                <th>Código Barras</th>
-                                <th>Nombre</th>
-                                <th>Stock</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @forelse($productosStockMinimo as $producto)
-                                <tr>
-                                    <td>{{ $producto->codigo_barras }}</td>
-
-                                    <td>{{ $producto->nombre }}</td>
-
-                                    <td>
-                                        @if($producto->stock <= 10)
-                                            <span class="badge bg-danger">
-                                                {{ $producto->stock }}
-                                            </span>
-
-                                        @elseif($producto->stock <= 20)
-                                            <span class="badge bg-warning text-dark">
-                                                {{ $producto->stock }}
-                                            </span>
-
-                                        @else
-                                            <span class="badge bg-success">
-                                                {{ $producto->stock }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center">
-                                        No existen productos registrados
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
 
