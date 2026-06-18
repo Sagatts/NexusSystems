@@ -8,7 +8,7 @@
 
     <div class="card-body">
 
-        <form method="POST" action="{{ route('profile.update') }}">
+        <form id="profileForm" method="POST" action="{{ route('profile.update') }}">
             @csrf
             @method('PATCH')
 
@@ -45,16 +45,18 @@
 
                     <input
                         type="text"
+                        id="nombre"
                         name="nombre"
                         class="form-control @error('nombre') is-invalid @enderror"
-                        value="{{ old('nombre', Auth::user()->nombre) }}"
-                        required>
+                        value="{{ old('nombre', Auth::user()->nombre) }}">
 
                     @error('nombre')
                         <div class="invalid-feedback">
                             {{ $message }}
                         </div>
                     @enderror
+
+                    <div id="nombreError" class="text-danger small mt-1"></div>
                 </div>
 
                 <div class="col-md-6">
@@ -64,16 +66,18 @@
 
                     <input
                         type="email"
+                        id="email"
                         name="email"
                         class="form-control @error('email') is-invalid @enderror"
-                        value="{{ old('email', Auth::user()->email) }}"
-                        required>
+                        value="{{ old('email', Auth::user()->email) }}">
 
                     @error('email')
                         <div class="invalid-feedback">
                             {{ $message }}
                         </div>
                     @enderror
+
+                    <div id="emailError" class="text-danger small mt-1"></div>
                 </div>
 
             </div>
@@ -89,3 +93,53 @@
     </div>
 
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const form = document.getElementById('profileForm');
+    const nombre = document.getElementById('nombre');
+    const email = document.getElementById('email');
+
+    form.addEventListener('submit', function(e) {
+
+        let valido = true;
+
+        document.getElementById('nombreError').innerHTML = '';
+        document.getElementById('emailError').innerHTML = '';
+
+        nombre.classList.remove('is-invalid');
+        email.classList.remove('is-invalid');
+
+        if (nombre.value.trim() === '') {
+            document.getElementById('nombreError').innerHTML =
+                'Debe ingresar un nombre.';
+            nombre.classList.add('is-invalid');
+            valido = false;
+        }
+
+        if (email.value.trim() === '') {
+            document.getElementById('emailError').innerHTML =
+                'Debe ingresar un correo electrónico.';
+            email.classList.add('is-invalid');
+            valido = false;
+        }
+        else {
+            const regex =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!regex.test(email.value)) {
+                document.getElementById('emailError').innerHTML =
+                    'Debe ingresar un correo válido.';
+                email.classList.add('is-invalid');
+                valido = false;
+            }
+        }
+
+        if (!valido) {
+            e.preventDefault();
+        }
+
+    });
+
+});
+</script>

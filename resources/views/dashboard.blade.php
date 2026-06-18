@@ -17,125 +17,124 @@
             </div>
         </div>
 
-        <div class="dashboard-grid">
-            <div class="col-lg-12 ">
-                <div class="card shadow p-3 mb-5 bg-white rounded-4">
-                    <div class="card-header bg-white">
-                        <h5 class="fw-bold mb-0">
-                            Top 5 Productos Más Retirados
-                        </h5>
+        <div class="row g-4 mb-4">
+            
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Top 5 Productos Más Retirados
+                    </span>
+                    <div class="dashboard-box p-3 flex-grow-1">
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <canvas id="graficoProductos"></canvas>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="card-body">
-                        <canvas id="graficoProductos"></canvas>
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Ventas por Categoría
+                    </span>
+                    <div class="dashboard-box p-3 flex-grow-1">
+                        <div style="position: relative; height: 100%; width: 100%;">
+                            <canvas id="graficoCategorias"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Productos Próximos a Vencer
+                    </span>
+                    <div class="dashboard-box flex-grow-1">
+                        <div class="table-responsive">
+                            <table class="custom-table table table-hover align-middle text-nowrap w-100 mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Código Barras</th>
+                                        <th>Nombre</th>
+                                        <th>Stock</th>
+                                        <th>Fecha Vencimiento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($productosPorVencer as $producto)
+                                        <tr>
+                                            <td>{{ $producto->codigo_barras }}</td>
+                                            <td>{{ $producto->nombre }}</td>
+                                            <td>{{ $producto->stock }}</td>
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                No existen productos registrados.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Ventas por categoría -->
-            <div class="col-lg-12">
-                <div class="card shadow p-3 mb-5 bg-white rounded-4">
-                    <div class="card-header bg-white">
-                        <h5 class="fw-bold mb-0">
-                            Ventas por Categoría
-                        </h5>
+            <div class="col-12 col-md-6">
+                <div class="dashboard-box-wrapper h-100 w-100 d-flex flex-column">
+                    <span class="dashboard-box-title">
+                        Productos con Stock Crítico
+                    </span>
+                    <div class="dashboard-box flex-grow-1">
+                        <div class="table-responsive">
+                            <table class="custom-table table table-hover align-middle text-nowrap w-100 mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Código Barras</th>
+                                        <th>Nombre</th>
+                                        <th>Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($productosStockMinimo as $producto)
+                                        <tr>
+                                            <td>{{ $producto->codigo_barras }}</td>
+                                            <td>{{ $producto->nombre }}</td>
+                                            <td>
+                                                @if($producto->stock <= 10)
+                                                    <span class="badge bg-danger">
+                                                        {{ $producto->stock }}
+                                                    </span>
+                                                @elseif($producto->stock <= 20)
+                                                    <span class="badge bg-warning text-dark">
+                                                        {{ $producto->stock }}
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-success">
+                                                        {{ $producto->stock }}
+                                                    </span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center py-4">
+                                                No existen productos registrados
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-                    <div class="card-body">
-                        <canvas id="graficoCategorias"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="dashboard-box-wrapper">
-                <span class="dashboard-box-title">
-                    Productos Próximos a Vencer
-                </span>
-                <div class="dashboard-box">
-                    <table class="custom-table">
-                        <thead>
-                            <tr>
-                                <th>Código Barras</th>
-                                <th>Nombre</th>
-                                <th>Stock</th>
-                                <th>Fecha Vencimiento</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($productosPorVencer as $producto)
-                                <tr>
-                                    <td>{{ $producto->codigo_barras }}</td>
-
-                                    <td>{{ $producto->nombre }}</td>
-
-                                    <td>{{ $producto->stock }}</td>
-
-                                    <td>
-                                        {{ \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">
-                                        No existen productos registrados.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
-            <div class="dashboard-box-wrapper">
-                <span class="dashboard-box-title">
-                    Productos con Stock Crítico
-                </span>
-
-                <div class="dashboard-box">
-                    <table class="custom-table">
-                        <thead>
-                            <tr>
-                                <th>Código Barras</th>
-                                <th>Nombre</th>
-                                <th>Stock</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @forelse($productosStockMinimo as $producto)
-                                <tr>
-                                    <td>{{ $producto->codigo_barras }}</td>
-
-                                    <td>{{ $producto->nombre }}</td>
-
-                                    <td>
-                                        @if($producto->stock <= 10)
-                                            <span class="badge bg-danger">
-                                                {{ $producto->stock }}
-                                            </span>
-
-                                        @elseif($producto->stock <= 20)
-                                            <span class="badge bg-warning text-dark">
-                                                {{ $producto->stock }}
-                                            </span>
-
-                                        @else
-                                            <span class="badge bg-success">
-                                                {{ $producto->stock }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center">
-                                        No existen productos registrados
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -143,108 +142,73 @@
 
     
     
-    <script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-        plugins: {
-            legend: {
-                display: true
-            },
-
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return '$' +
-                            context.raw.toLocaleString('es-CL');
-                    }
-                }
-            }
-        },
-
-        scales: {
-            y: {
-                beginAtZero: true,
-
-                ticks: {
-                    callback: function(value) {
-                        return '$' +
-                            value.toLocaleString('es-CL');
-                    }
-                }
-            }
-        },
-    </script>
-    <script>
     // ==========================
     // RESUMEN DE VENTAS MENSUALES
     // ==========================
 
-    const ventasCtx =
-        document.getElementById('graficoVentas');
+    const ventasCtx = document.getElementById('graficoVentas');
 
-    new Chart(ventasCtx, {
+    if (ventasCtx) {
+        new Chart(ventasCtx, {
+            type: 'line',
 
-        type: 'line',
+            data: {
+                labels: @json($labels),
 
-        data: {
+                datasets: [{
+                    label: 'Ventas Mensuales ($)',
+                    data: @json($totales),
 
-            labels: @json($labels),
+                    borderColor: '#ff3333',
+                    backgroundColor: 'rgba(255, 51, 51, 0.15)',
 
-            datasets: [{
-                label: 'Ventas Mensuales ($)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
 
-                data: @json($totales),
-
-                borderColor: '#ff3333',
-                backgroundColor: 'rgba(255, 51, 51, 0.15)',
-
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-
-                pointRadius: 5,
-                pointHoverRadius: 8
-            }]
-        },
-
-        options: {
-
-            responsive: true,
-            maintainAspectRatio: false,
-
-            plugins: {
-
-                legend: {
-                    display: true
-                },
-
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return '$' +
-                                context.raw.toLocaleString('es-CL');
-                        }
-                    }
-                }
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
             },
 
-            scales: {
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-                y: {
-                    beginAtZero: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    },
 
-                    ticks: {
-                        callback: function(value) {
-                            return '$' +
-                                value.toLocaleString('es-CL');
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' +
+                                    context.raw.toLocaleString('es-CL');
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            callback: function(value) {
+                                return '$' +
+                                    value.toLocaleString('es-CL');
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
-</script>
-<script>
 
     // ==========================
     // PRODUCTOS MÁS / MENOS RETIRADOS
@@ -259,75 +223,71 @@
     const ctxProductos =
         document.getElementById('graficoProductos');
 
-    const graficoProductos = new Chart(ctxProductos, {
+    let graficoProductos = null;
 
-        type: 'bar',
+    if (ctxProductos) {
 
-        data: {
+        graficoProductos = new Chart(ctxProductos, {
 
-            labels: labelsMas,
+            type: 'bar',
 
-            datasets: [{
-                label: 'Cantidad Retirada',
+            data: {
+                labels: labelsMas,
 
-                data: datosMas,
+                datasets: [{
+                    label: 'Cantidad Retirada',
 
-                backgroundColor: '#ff3333',
-                borderColor: '#e62e2e',
-                borderWidth: 1,
-                borderRadius: 8
-            }]
-        },
+                    data: datosMas,
 
-        options: {
-
-            indexAxis: 'y',
-
-            responsive: true,
-
-            plugins: {
-                legend: {
-                    display: false
-                }
+                    backgroundColor: '#ff3333',
+                    borderColor: '#e62e2e',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
             },
 
-            scales: {
-                x: {
-                    beginAtZero: true
+            options: {
+                indexAxis: 'y',
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
+        });
+    }
 
-    });
 
-    // Selector Más/Menos retirados
+    // Selector Más / Menos retirados
 
     document.getElementById('tipoGraficoProductos')
         ?.addEventListener('change', function () {
 
+            if (!graficoProductos) return;
+
             if (this.value === 'mas') {
 
                 graficoProductos.data.labels = labelsMas;
-
                 graficoProductos.data.datasets[0].data = datosMas;
-
-                graficoProductos.data.datasets[0].backgroundColor =
-                    '#ff3333';
-
-                graficoProductos.data.datasets[0].borderColor =
-                    '#e62e2e';
+                graficoProductos.data.datasets[0].backgroundColor = '#ff3333';
+                graficoProductos.data.datasets[0].borderColor = '#e62e2e';
 
             } else {
 
                 graficoProductos.data.labels = labelsMenos;
-
                 graficoProductos.data.datasets[0].data = datosMenos;
-
-                graficoProductos.data.datasets[0].backgroundColor =
-                    '#374151';
-
-                graficoProductos.data.datasets[0].borderColor =
-                    '#1f2937';
+                graficoProductos.data.datasets[0].backgroundColor = '#374151';
+                graficoProductos.data.datasets[0].borderColor = '#1f2937';
             }
 
             graficoProductos.update();
@@ -341,70 +301,72 @@
     const ctxCategorias =
         document.getElementById('graficoCategorias');
 
-    new Chart(ctxCategorias, {
+    if (ctxCategorias) {
 
-        type: 'bar',
+        new Chart(ctxCategorias, {
 
-        data: {
+            type: 'bar',
 
-            labels: @json($labelsCategorias),
+            data: {
 
-            datasets: [{
-                label: 'Ventas ($)',
+                labels: @json($labelsCategorias),
 
-                data: @json($totalesCategorias),
+                datasets: [{
+                    label: 'Ventas ($)',
 
-                backgroundColor: '#ff3333',
-                borderColor: '#e62e2e',
-                borderWidth: 1,
-                borderRadius: 8
-            }]
-        },
+                    data: @json($totalesCategorias),
 
-        options: {
-
-            indexAxis: 'y',
-
-            responsive: true,
-
-            plugins: {
-
-                legend: {
-                    display: false
-                },
-
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-
-                            return '$' +
-                                context.raw.toLocaleString('es-CL');
-
-                        }
-                    }
-                }
+                    backgroundColor: '#ff3333',
+                    borderColor: '#e62e2e',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
             },
 
-            scales: {
+            options: {
 
-                x: {
+                indexAxis: 'y',
 
-                    beginAtZero: true,
+                responsive: true,
+                maintainAspectRatio: false,
 
-                    ticks: {
+                plugins: {
 
-                        callback: function(value) {
+                    legend: {
+                        display: false
+                    },
 
-                            return '$' +
-                                value.toLocaleString('es-CL');
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
 
+                                return '$' +
+                                    context.raw.toLocaleString('es-CL');
+
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+
+                    x: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+                            callback: function(value) {
+                                return '$' +
+                                    value.toLocaleString('es-CL');
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
+});
 </script>
 
 </x-app-layout>

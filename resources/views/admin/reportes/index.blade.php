@@ -13,10 +13,10 @@
                 <h4 class="fw-bold mb-0">
                     Historial de Movimientos
                 </h4>
-                <button class="btn btn-success fw-bold">
-                    <i class="bi bi-file-earmark-excel me-1"></i>
-                    Generar Reporte
-                </button>
+                <a href="{{ route('admin.reportes.create') }}" class="btn btn-success fw-bold">
+                    <i class="bi bi-file-earmark-plus me-1"></i>
+                    Configurar Reporte
+                </a>
             </div>
             <div class="card-body">
     

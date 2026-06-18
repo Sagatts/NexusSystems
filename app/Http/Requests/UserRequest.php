@@ -27,14 +27,19 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $usuarioId = $this->route('usuario')?->id;
+        // Obtenemos el parámetro de la ruta. Puede llegar como el modelo Usuario 
+        // (si tienes Route Model Binding configurado) o como un string (el RUT).
+        $usuario = $this->route('usuario');
+        $rutIgnorar = $usuario instanceof Usuario ? $usuario->rut : $usuario;
 
         return [
             'rut' => [
                 'required',
                 'string',
                 'max:12',
-                Rule::unique(Usuario::class)->ignore($usuarioId, 'id'),
+                // Le decimos explícitamente que valide en la tabla y columna 'rut', 
+                // pero ignorando la fila que tenga este mismo $rutIgnorar en la columna 'rut'
+                Rule::unique(Usuario::class, 'rut')->ignore($rutIgnorar, 'rut'),
                 new ValidarRut(),
             ],
             'nombre' => [
@@ -47,7 +52,8 @@ class UserRequest extends FormRequest
                 'string',
                 'lowercase',
                 'max:255',
-                Rule::unique(Usuario::class)->ignore($usuarioId, 'id'),
+                // Hacemos exactamente lo mismo para el correo
+                Rule::unique(Usuario::class, 'email')->ignore($rutIgnorar, 'rut'),
                 new ValidarCorreo(),
             ],
             'contrasena' => [

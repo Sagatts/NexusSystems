@@ -6,6 +6,9 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Validation\Rule;
+
+
 
 class ProductoController extends Controller
 {
@@ -27,6 +30,8 @@ class ProductoController extends Controller
             'admin.productos.create',
             compact('categorias')
         );
+
+        
     }
 
     public function getProductos(Request $request) 
@@ -78,6 +83,24 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'codigo_barras' => 'required|string|max:100|unique:producto,codigo_barras',
+            'id_categoria' => 'required|exists:categoria,id',
+            'precio_neto' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'fecha_vencimiento' => 'required|date|after_or_equal:today',
+        ], [
+            'nombre.required' => 'Debe ingresar el nombre del producto.',
+            'codigo_barras.required' => 'Debe ingresar un código de barras.',
+            'codigo_barras.unique' => 'Ya existe un producto registrado con este código de barras.',
+            'id_categoria.required' => 'Debe seleccionar una categoría.',
+            'precio_neto.required' => 'Debe ingresar el precio del producto.',
+            'stock.required' => 'Debe ingresar el stock inicial.',
+            'fecha_vencimiento.required' => 'Debe ingresar una fecha de vencimiento.',
+            'fecha_vencimiento.after_or_equal' => 'La fecha de vencimiento no puede ser anterior a hoy.',
+        ]);
+
         Producto::create($request->all());
 
         return redirect()
@@ -86,6 +109,16 @@ class ProductoController extends Controller
                 'success',
                 'Producto creado correctamente'
             );
+    }
+
+    public function verificarCodigo(Request $request)
+    {
+        return response()->json([
+            'existe' => Producto::where(
+                'codigo_barras',
+                $request->codigo
+            )->exists()
+        ]);
     }
 
     public function edit(Producto $producto)
@@ -102,6 +135,25 @@ class ProductoController extends Controller
 
     public function update(Request $request,Producto $producto)
     {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'codigo_barras' => [
+                'required',
+                Rule::unique('producto', 'codigo_barras')->ignore($producto->id)
+            ],
+            'id_categoria' => 'required|exists:categoria,id',
+            'precio_neto' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'fecha_vencimiento' => 'nullable|date|after_or_equal:today',
+        ], [
+            'nombre.required' => 'Debe ingresar el nombre del producto.',
+            'codigo_barras.unique' => 'Ya existe un producto registrado con este código de barras.',
+            'id_categoria.required' => 'Debe seleccionar una categoría.',
+            'precio_neto.required' => 'Debe ingresar el precio del producto.',
+            'stock.required' => 'Debe ingresar el stock inicial.',
+            'fecha_vencimiento.after_or_equal' => 'La fecha de vencimiento no puede ser anterior a hoy.',
+        ]);
+
         $producto->update($request->all());
  
         return redirect()
