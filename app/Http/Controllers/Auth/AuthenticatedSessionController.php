@@ -28,8 +28,23 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
-    }
+        $user = auth()->user();
+
+        switch ($user->rol) {
+
+            case 'administrador':
+                return redirect()->route('dashboard');
+
+            case 'garzon':
+            case 'cocina':
+                return redirect()->route('pedidos.index');
+
+            default:
+                Auth::logout();
+
+                return redirect()->route('login');
+        }
+}
 
     /**
      * Destroy an authenticated session.

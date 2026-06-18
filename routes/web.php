@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\PedidoController;
 
 
 Route::get('/', function () {
@@ -15,8 +16,8 @@ Route::get('/', function () {
 
 Route::get('/dashboard',
     [DashboardController::class, 'index']
-)->middleware(['auth'])->name('dashboard');
-
+)->middleware(['auth', 'role:administrador'])
+ ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -106,13 +107,8 @@ Route::middleware(['auth', 'role:administrador'])
 */
 
 Route::middleware(['auth', 'role:garzon,cocina'])
-    ->prefix('operaciones')
-    ->name('operaciones.')
-    ->group(function () {
-
-        Route::get('/pedidos', fn() => view('garzon_cocina.pedidos'))
-            ->name('pedidos');
-});
+    ->get('/pedidos', [PedidoController::class, 'index'])
+    ->name('pedidos.index');
 
 
 require __DIR__.'/auth.php';
