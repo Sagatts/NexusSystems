@@ -5,7 +5,9 @@
             
             <!-- Logo principal de la empresa -->
             <div class="text-center mb-4">
-                <img src="{{ asset('img/logo-yiyo.png') }}" alt="Logo La Picá de Yiyo" class="img-fluid" style="max-height: 120px;">
+                <img src="{{ asset('img/logo-yiyo.png') }}"
+                     alt="Logo La Picá de Yiyo"
+                     class="img-fluid mx-auto d-block logo-login">
             </div>
 
             <!-- Mensaje principal alineado a la izquierda -->
