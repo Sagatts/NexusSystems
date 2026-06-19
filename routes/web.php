@@ -109,6 +109,7 @@ Route::middleware(['auth', 'role:administrador'])
 Route::middleware(['auth', 'role:garzon,cocina'])
     ->get('/pedidos', [PedidoController::class, 'index'])
     ->name('pedidos.index');
+    Route::post('/pedidos/procesar', [App\Http\Controllers\PedidoController::class, 'procesarPedido'])->name('pedidos.procesar');
 
 
 require __DIR__.'/auth.php';
