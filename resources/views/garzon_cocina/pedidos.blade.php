@@ -80,7 +80,7 @@
     </nav>
 
     <!-- ==========================================
-         CONTENIDO PRINCIPAL
+         CONTENIDO PRINCIPAL GARZON
     =========================================== -->
     <main class="container-fluid py-4 px-4">
         
@@ -91,6 +91,81 @@
                 <div class="card-header bg-white pt-3">
                     <h4 class="fw-bold mb-0">
                         <i class="bi bi-person-badge text-primary me-2"></i> Pedidos para Garzón
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <table id="tablaGarzon" class="table table-striped table-hover align-middle text-nowrap" style="width: 100%;">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Código de Barras</th>
+                                <th>Nombre</th>
+                                <th>Stock</th>
+                                <th>Fecha de Vencimiento</th>
+                                <th class="text-center">Cantidad a Retirar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($productos as $producto)
+                            <tr>
+                                <td class="fw-semibold">{{ $producto->codigo_barras }}</td>
+                                <td>{{ $producto->nombre }}</td>
+                                
+                                <td>
+                                    @if($producto->stock <= 10)
+                                        <span class="badge bg-danger rounded-pill">{{ $producto->stock }}</span>
+                                    @elseif($producto->stock <= 20)
+                                        <span class="badge bg-warning text-dark rounded-pill">{{ $producto->stock }}</span>
+                                    @else
+                                        <span class="badge bg-success rounded-pill">{{ $producto->stock }}</span>
+                                    @endif
+                                </td>
+                                
+                                <td>
+                                    {{ $producto->fecha_vencimiento ? \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') : 'Sin fecha' }}
+                                </td>
+                                
+                                <td>
+                                    <!-- BOTONES + Y - -->
+                                    <div class="d-flex justify-content-center">
+                                        <div class="input-group input-group-sm shadow-sm rounded" style="width: 120px;">
+                                            <button class="btn btn-outline-danger btn-restar" type="button">
+                                                <i class="bi bi-dash-lg"></i>
+                                            </button>
+                                            
+                                            <input type="text" class="form-control text-center fw-bold input-cantidad" data-id="{{ $producto->id }}" value="0" readonly>
+                                            
+                                            <button class="btn btn-outline-success btn-sumar" type="button">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            
+        @endif
+
+    </main>
+
+    <!-- ==========================================
+         CONTENIDO PRINCIPAL COCINA
+    =========================================== -->
+
+    <main class="container-fluid py-4 px-4">
+        
+        @if($rol == 'cocina')
+            
+            <div class="card shadow-sm border-0 rounded-4">
+                
+                <div class="card-header bg-white pt-3">
+                    <h4 class="fw-bold mb-0">
+                        <i class="bi bi-person-badge text-primary me-2"></i> Pedidos para Cocina
                     </h4>
                 </div>
 
@@ -252,7 +327,6 @@
                    
                     if (cantidad > 0) {
                         let idProducto = $(this).data('id');
-                        // Obtenemos el nombre del producto (es la columna índice 1 de esa misma fila)
                         let nombreProducto = $(this).closest('tr').find('td:eq(1)').text().trim();
 
                         
