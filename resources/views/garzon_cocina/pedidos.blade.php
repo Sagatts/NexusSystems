@@ -7,27 +7,33 @@
 
     <title>La Picá de Yiyo - Operaciones</title>
 
+    <!-- Bootstrap, Iconos y DataTables CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+    <link rel="icon" href="{{ asset('img/logo-yiyo.png') }}" type="image/png">
 
+    <!-- Estilos base -->
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     
     <style>
         /* Muro de contención para DataTables en celulares */
         .dataTables_wrapper { max-width: 100%; overflow-x: hidden; }
         .dataTables_scrollBody { overflow-x: auto !important; width: 100% !important; }
-        
-        /* Ocultar el buscador por defecto de DataTables porque usaremos el nuestro en la cabecera */
-        .dataTables_filter { display: none !important; }
 
         /* Estilo para que el input del medio no se pueda modificar escribiendo letras */
         .input-cantidad { background-color: white !important; cursor: default; }
+
+        /* Alineación perfecta para los textos inferiores generados por DataTables */
+        .dataTables_info { padding-top: 0 !important; margin-bottom: 0 !important; }
     </style>
 </head>
 <body class="bg-light" style="font-family: 'Figtree', sans-serif;">
 
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
     <nav class="navbar navbar-expand navbar-light bg-white shadow-sm py-2 px-4 border-bottom-0 sticky-top">
         <div class="container-fluid">
             
@@ -73,23 +79,19 @@
         </div>
     </nav>
 
+    <!-- ==========================================
+         CONTENIDO PRINCIPAL
+    =========================================== -->
     <main class="container-fluid py-4 px-4">
         
         @if($rol == 'garzon')
             
             <div class="card shadow-sm border-0 rounded-4">
                 
-                <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center pt-3 pb-3">
-                    <h4 class="fw-bold mb-3 mb-md-0">
+                <div class="card-header bg-white pt-3">
+                    <h4 class="fw-bold mb-0">
                         <i class="bi bi-person-badge text-primary me-2"></i> Pedidos para Garzón
                     </h4>
-                    
-                    <div class="input-group" style="max-width: 300px;">
-                        <span class="input-group-text bg-white text-muted border-end-0">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="text" id="buscadorGarzon" class="form-control border-start-0 ps-0" placeholder="Buscar producto...">
-                    </div>
                 </div>
 
                 <div class="card-body p-4">
@@ -124,13 +126,14 @@
                                 </td>
                                 
                                 <td>
+                                    <!-- BOTONES + Y - -->
                                     <div class="d-flex justify-content-center">
                                         <div class="input-group input-group-sm shadow-sm rounded" style="width: 120px;">
                                             <button class="btn btn-outline-danger btn-restar" type="button">
                                                 <i class="bi bi-dash-lg"></i>
                                             </button>
                                             
-                                            <input type="text" class="form-control text-center fw-bold input-cantidad" value="0" readonly>
+                                            <input type="text" class="form-control text-center fw-bold input-cantidad" data-id="{{ $producto->id }}" value="0" readonly>
                                             
                                             <button class="btn btn-outline-success btn-sumar" type="button">
                                                 <i class="bi bi-plus-lg"></i>
@@ -150,6 +153,33 @@
 
     </main>
 
+    <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title fw-bold" id="modalConfirmarPedidoLabel">
+                        <i class="bi bi-cart-check me-2"></i> Resumen de Retiro
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-3">Se descontarán los siguientes productos del inventario:</p>
+                    
+                    <ul class="list-group list-group-flush mb-0 border rounded-3" id="listaResumenPedido">
+                    </ul>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary fw-bold shadow-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success fw-bold shadow-sm" id="btnEnviarPedidoFinal">
+                        Confirmar y Descontar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
@@ -158,38 +188,143 @@
     <script>
         $(document).ready(function() {
             
-            // 1. Inicializamos DataTables
             let tabla = $('#tablaGarzon').DataTable({
                 scrollX: true,
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
                 },
                 columnDefs: [
-                    // Evita que se pueda ordenar la tabla usando la columna de los botones
                     { targets: 4, orderable: false, searchable: false } 
-                ]
+                ],
+                
+                initComplete: function() {
+                    let api = this.api(); 
+                    let contenedorBuscador = $('.dataTables_filter');
+                    contenedorBuscador.empty(); 
+                    let buscadorHTML = `
+                        <div class="input-group input-group-sm mb-0 ms-auto" style="max-width: 250px;">
+                            <span class="input-group-text bg-white text-muted border-end-0"><i class="bi bi-search"></i></span>
+                            <input type="text" id="buscadorSuperior" class="form-control border-start-0 ps-0" placeholder="Buscar producto...">
+                        </div>
+                    `;
+                    contenedorBuscador.append(buscadorHTML);
+                    $('#buscadorSuperior').on('keyup', function() { api.search(this.value).draw(); });
+
+                   
+                    let contenedorPaginacion = $('.dataTables_paginate').parent();
+                    contenedorPaginacion.addClass('d-flex flex-wrap justify-content-md-end align-items-center gap-3 mt-3 mt-md-0');
+                    let botonConfirmarHTML = `
+                        <button type="button" class="btn btn-success fw-bold shadow-sm px-4" id="btnAbrirModalConfirmacion">
+                            Confirmar <i class="bi bi-check-circle ms-1"></i>
+                        </button>
+                    `;
+                    $('.dataTables_paginate').after(botonConfirmarHTML);
+                }
             });
 
-            // 2. Conectamos nuestro buscador personalizado con DataTables
-            $('#buscadorGarzon').on('keyup', function() {
-                tabla.search(this.value).draw();
-            });
-
-            // 3. Lógica para los botones de Sumar (+)
+            // 2. Botones de Sumar y Restar
             $('#tablaGarzon tbody').on('click', '.btn-sumar', function() {
                 let input = $(this).siblings('.input-cantidad');
-                let valorActual = parseInt(input.val());
-                // Puedes agregar lógica aquí para no superar el "Stock" máximo si lo deseas
-                input.val(valorActual + 1);
+                input.val(parseInt(input.val()) + 1);
             });
 
-            // 4. Lógica para los botones de Restar (-)
             $('#tablaGarzon tbody').on('click', '.btn-restar', function() {
                 let input = $(this).siblings('.input-cantidad');
                 let valorActual = parseInt(input.val());
-                if (valorActual > 0) { // Evita números negativos
-                    input.val(valorActual - 1);
+                if (valorActual > 0) input.val(valorActual - 1);
+            });
+
+            // ==========================================
+            // LÓGICA DEL PEDIDO (MODAL Y BASE DE DATOS)
+            // ==========================================
+
+            let arregloProductosFinal = [];
+
+            
+            $(document).on('click', '#btnAbrirModalConfirmacion', function() {
+                arregloProductosFinal = [];
+                $('#listaResumenPedido').empty();
+
+                
+                tabla.$('input.input-cantidad').each(function() {
+                    let cantidad = parseInt($(this).val());
+                    
+                   
+                    if (cantidad > 0) {
+                        let idProducto = $(this).data('id');
+                        // Obtenemos el nombre del producto (es la columna índice 1 de esa misma fila)
+                        let nombreProducto = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+                        
+                        arregloProductosFinal.push({
+                            id: idProducto,
+                            cantidad: cantidad
+                        });
+
+            
+                        let diseñoLista = `
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ${nombreProducto}
+                                <span class="badge bg-primary rounded-pill px-3 py-2 fs-6 shadow-sm">x ${cantidad}</span>
+                            </li>
+                        `;
+                        $('#listaResumenPedido').append(diseñoLista);
+                    }
+                });
+
+                // Si no seleccionó nada, lanzamos alerta de error
+                if (arregloProductosFinal.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Carrito vacío',
+                        text: 'Debes sumar al menos 1 producto para poder confirmar el retiro.',
+                        confirmButtonColor: '#0d6efd'
+                    });
+                    return;
                 }
+
+            
+                $('#modalConfirmarPedido').modal('show');
+            });
+
+            
+            $('#btnEnviarPedidoFinal').click(function() {
+                
+                let btn = $(this);
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Procesando...');
+
+                $.ajax({
+                    url: '{{ route("pedidos.procesar") }}', // La ruta en web.php
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Llave de seguridad obligatoria en Laravel
+                        productos: arregloProductosFinal 
+                    },
+                    success: function(response) {
+                        $('#modalConfirmarPedido').modal('hide');
+                        
+                        if(response.success) {
+                            // Alerta de éxito y recargamos la página para ver el nuevo stock
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Retiro exitoso!',
+                                text: 'Los productos han sido descontados del inventario.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                location.reload(); 
+                            });
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                            btn.prop('disabled', false).text('Confirmar y Descontar');
+                        }
+                    },
+                    error: function() {
+                        $('#modalConfirmarPedido').modal('hide');
+                        Swal.fire('Error crítico', 'Hubo un problema de conexión con el servidor.', 'error');
+                        btn.prop('disabled', false).text('Confirmar y Descontar');
+                    }
+                });
             });
 
         });
