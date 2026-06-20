@@ -50,14 +50,16 @@ Route::middleware(['auth', 'role:administrador'])
             [ProductoController::class, 'getProductos']
         )->name('productos.datatable');
 
+        Route::get('/productos/verificar-codigo', [ProductoController::class, 'verificarCodigo']);
+        Route::get('productos/plantilla', [ProductoController::class, 'descargarPlantilla'])->name('productos.plantilla');
+        Route::post('productos/importar', [ProductoController::class, 'importar'])->name('productos.importar');
+
         Route::resource(
             'productos',
             ProductoController::class
         );
 
         Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('admin.productos.update');
-
-        Route::get('/productos/verificar-codigo', [ProductoController::class, 'verificarCodigo']);
 
         // =========================
         // USUARIOS
@@ -109,7 +111,8 @@ Route::middleware(['auth', 'role:administrador'])
 Route::middleware(['auth', 'role:garzon,cocina'])
     ->get('/pedidos', [PedidoController::class, 'index'])
     ->name('pedidos.index');
-    Route::post('/pedidos/procesar', [App\Http\Controllers\PedidoController::class, 'procesarPedido'])->name('pedidos.procesar');
+    
+Route::post('/pedidos/procesar', [App\Http\Controllers\PedidoController::class, 'procesarPedido'])->name('pedidos.procesar');
 
 
 require __DIR__.'/auth.php';

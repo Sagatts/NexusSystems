@@ -23,16 +23,14 @@
             </div>
 
             <div class="card-body p-4">
-    
-                <select id="filtro_categoria" class="form-select form-select-sm d-inline-block w-auto me-3 d-none">
+                
+                <select id="filtro_categoria" class="form-select form-select-sm d-inline-block w-auto me-3 d-none mb-3">
                     <option value="">Todas las categorías</option>
                     @foreach($categorias as $categoria)
                         <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
                     @endforeach
                 </select>
 
-                
-                    
                 <table id="tablaProductos" class="table table-striped table-hover align-middletext-nowrap" style="width: 100%;">
                     <thead class="table-dark">
                         <tr>
@@ -51,12 +49,14 @@
                 
             </div>
 
+        </div>
+
     </div>
 
     @push('scripts')
 
     <style>
-        /* NUEVO: Obliga a todo el contenedor de DataTables a respetar los bordes de la tarjeta */
+        /* Obliga a todo el contenedor de DataTables a respetar los bordes de la tarjeta */
         .dataTables_wrapper {
             max-width: 100%;
             overflow-x: hidden;
@@ -93,7 +93,6 @@
         }
     </style>
 
-    
     <script>
         $(document).ready(function () {
 
@@ -156,14 +155,10 @@
             });
 
             $('#filtro_categoria').change(function () {
-                $('#tablaProductos').DataTable().ajax.reload();
-            });
-
-            $('#filtro_categoria').change(function(){
                 tabla.ajax.reload();
             });
 
-            // 3. Función para Eliminar con SweetAlert
+            // Función para Eliminar con SweetAlert
             window.abrirModalEliminar = function(id) {
                 Swal.fire({
                     title: '¿Estás seguro?',
