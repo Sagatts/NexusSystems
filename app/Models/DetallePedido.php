@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetallePedido extends Model
 {
-    protected $table = 'DETALLE_PEDIDO';
-    public $timestamps = false;
+    protected $table = 'detalle_pedido'; // Nombre de tu tabla
 
     protected $fillable = [
         'id_pedido',
@@ -17,13 +16,5 @@ class DetallePedido extends Model
         'fecha_vencimiento'
     ];
 
-    public function pedido()
-    {
-        return $this->belongsTo(Pedido::class, 'id_pedido');
-    }
-
-    public function producto()
-    {
-        return $this->belongsTo(Producto::class, 'id_producto');
-    }
+    public $timestamps = false; // Quitar si tu tabla no tiene created_at/updated_at
 }

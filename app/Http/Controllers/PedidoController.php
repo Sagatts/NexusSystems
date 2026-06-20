@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PedidoController extends Controller
 {
     public function index()
     {
-        $rol = auth()->user()->rol;
+        $rol = Auth::user()->rol;
 
         if ($rol === 'garzon') {
             
