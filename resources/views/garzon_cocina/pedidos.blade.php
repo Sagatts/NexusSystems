@@ -27,6 +27,20 @@
 
         /* Alineación perfecta para los textos inferiores generados por DataTables */
         .dataTables_info { padding-top: 0 !important; margin-bottom: 0 !important; }
+
+        /* Estilos responsivos para el buscador */
+        .buscador-responsivo { max-width: 250px; }
+        
+        @media (max-width: 767px) {
+            .buscador-responsivo { 
+                max-width: 100% !important; 
+                width: 100% !important; 
+            }
+            .dataTables_filter { 
+                width: 100%; 
+                margin-bottom: 12px; 
+            }
+        }
     </style>
 </head>
 <body class="bg-light" style="font-family: 'Figtree', sans-serif;">
@@ -98,17 +112,17 @@
                     <table id="tablaGarzon" class="table table-striped table-hover align-middle text-nowrap" style="width: 100%;">
                         <thead class="table-dark">
                             <tr>
-                                <th>Código de Barras</th>
+                                <th class="d-none d-md-table-cell">Código de Barras</th> <!--Se oculta en celular -->
                                 <th>Nombre</th>
                                 <th>Stock</th>
-                                <th>Fecha de Vencimiento</th>
+                                <th class="d-none d-md-table-cell">Fecha de Vencimiento</th> <!--Se oculta en celular -->
                                 <th class="text-center">Cantidad a Retirar</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($productos as $producto)
                             <tr>
-                                <td class="fw-semibold">{{ $producto->codigo_barras }}</td>
+                                <td class="fw-semibold d-none d-md-table-cell">{{ $producto->codigo_barras }}</td> <!--Se oculta en celular -->
                                 <td>{{ $producto->nombre }}</td>
                                 
                                 <td>
@@ -121,7 +135,7 @@
                                     @endif
                                 </td>
                                 
-                                <td>
+                                <td class="d-none d-md-table-cell">  <!--Se oculta en celular -->
                                     {{ $producto->fecha_vencimiento ? \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') : 'Sin fecha' }}
                                 </td>
                                 
@@ -173,17 +187,17 @@
                     <table id="tablaGarzon" class="table table-striped table-hover align-middle text-nowrap" style="width: 100%;">
                         <thead class="table-dark">
                             <tr>
-                                <th>Código de Barras</th>
+                                <th class="d-none d-md-table-cell">Código de Barras</th> <!--Se oculta en celular -->
                                 <th>Nombre</th>
                                 <th>Stock</th>
-                                <th>Fecha de Vencimiento</th>
+                                <th  class="d-none d-md-table-cell">Fecha de Vencimiento</th>  <!--Se oculta en celular -->
                                 <th class="text-center">Cantidad a Retirar</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($productos as $producto)
                             <tr>
-                                <td class="fw-semibold">{{ $producto->codigo_barras }}</td>
+                                <td class="fw-semibold d-none d-md-table-cell">{{ $producto->codigo_barras }}</td>
                                 <td>{{ $producto->nombre }}</td>
                                 
                                 <td>
@@ -196,7 +210,7 @@
                                     @endif
                                 </td>
                                 
-                                <td>
+                                <td class="d-none d-md-table-cell"> <!--Se oculta en celular -->
                                     {{ $producto->fecha_vencimiento ? \Carbon\Carbon::parse($producto->fecha_vencimiento)->format('d/m/Y') : 'Sin fecha' }}
                                 </td>
                                 
@@ -277,7 +291,7 @@
                     let contenedorBuscador = $('.dataTables_filter');
                     contenedorBuscador.empty(); 
                     let buscadorHTML = `
-                        <div class="input-group input-group-sm mb-0 ms-auto" style="max-width: 250px;">
+                        <div class="input-group input-group-sm mb-0 ms-md-auto buscador-responsivo">
                             <span class="input-group-text bg-white text-muted border-end-0"><i class="bi bi-search"></i></span>
                             <input type="text" id="buscadorSuperior" class="form-control border-start-0 ps-0" placeholder="Buscar producto...">
                         </div>
