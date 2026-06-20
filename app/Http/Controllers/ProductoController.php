@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Validation\Rule;
 
-
+// Importaciones necesarias para manejar Excel/CSV y capturar errores
+use App\Imports\ProductosImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class ProductoController extends Controller
 {
@@ -30,8 +33,6 @@ class ProductoController extends Controller
             'admin.productos.create',
             compact('categorias')
         );
-
-        
     }
 
     public function getProductos(Request $request) 
@@ -133,7 +134,7 @@ class ProductoController extends Controller
         ));
     }
 
-    public function update(Request $request,Producto $producto)
+    public function update(Request $request, Producto $producto)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
@@ -166,16 +167,77 @@ class ProductoController extends Controller
 
     public function destroy($id)
     {
-        // Buscamos el producto
         $producto = Producto::findOrFail($id);
-        
-        // Lo eliminamos de la base de datos
         $producto->delete();
 
-        // Le respondemos al AJAX que todo salió bien
         return response()->json([
             'success' => true,
             'message' => 'Producto eliminado correctamente'
         ]);
+    }
+
+    // ==========================================
+    // FUNCIÓN PARA IMPORTAR EL EXCEL
+    // ==========================================
+    public function importar(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|mimes:xlsx,xls,csv,txt|max:5120',
+        ]);
+
+        try {
+            Excel::import(new ProductosImport, $request->file('archivo_excel'));
+
+            // Si TODO sale bien, redirige al Index (Inventario) con mensaje de éxito
+            return redirect()->route('admin.productos.index')
+                ->with('success', '¡Productos importados correctamente!');
+                
+        } catch (ValidationException $e) {
+            $fallas = $e->failures();
+            $mensajeError = "Errores en el Excel: ";
+            
+            foreach ($fallas as $falla) {
+                $mensajeError .= "Fila " . $falla->row() . ": " . $falla->errors()[0] . " | ";
+            }
+
+            // Redirige "atrás" (a la vista de Crear) y muestra el error detallado
+            return back()->with('error', $mensajeError);
+                
+        } catch (\Exception $e) {
+            // Redirige "atrás" y usa $e->getMessage() para mostrar el error exacto (ej: "La categoría no existe")
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    // ==========================================
+    // FUNCIÓN PARA DESCARGAR LA PLANTILLA
+    // ==========================================
+    public function descargarPlantilla()
+    {
+        $fileName = 'Plantilla_Productos.csv';
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            
+            // Formato UTF-8 para que las tildes y ñ no se rompan
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Títulos legibles: Cambiamos 'id_categoria' por 'categoria'
+            fputcsv($file, ['codigo_barras', 'nombre', 'precio_neto', 'stock', 'fecha_vencimiento', 'categoria']);
+            
+            // Fila de ejemplo con el nombre real de la categoría
+            fputcsv($file, ['7890123', 'Bebida Coca Cola 3L', '2500', '50', '2026-12-31', 'Bebidas']);
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
