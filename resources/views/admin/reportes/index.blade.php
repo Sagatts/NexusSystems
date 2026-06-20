@@ -2,7 +2,7 @@
 
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Gestión de Reportes
+        Historial de movimientos
     </h2>
 </x-slot>
 
@@ -74,6 +74,21 @@
                 margin-top: 8px;
                 width: 100% !important;
             }
+        }
+
+        div.dataTables_wrapper div.dataTables_filter label {
+            display: inline-flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+            white-space: normal !important; /* Permite que el texto baje a la siguiente línea si no cabe */
+        }
+        
+        div.dataTables_wrapper div.dataTables_filter input {
+            width: 250px !important; /* Tamaño fijo ideal para el cuadro de texto */
+            max-width: 100%; /* Asegura que no rompa la pantalla si se achica más */
+            margin-left: 10px !important;
+            margin-top: 5px; /* Le da un respiro si se apila debajo del texto */
         }
 </style>
 <script>

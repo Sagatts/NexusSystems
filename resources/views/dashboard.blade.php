@@ -7,7 +7,9 @@
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
            ¡Bienvenido, {{ trim(Auth::user()->nombre) }}!
      </h2>
-    <div class="dashboard-wrapper">
+
+     
+    <div class="dashboard-wrapper px-2 px-md-4">
         
         <div class="dashboard-top-wrapper">
             <span class="dashboard-box-title">Resumen de ventas mensuales</span>
