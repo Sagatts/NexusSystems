@@ -23,7 +23,7 @@
 
             <a href="{{ route('admin.reportes.index') }}" class="sidebar-link {{ request()->routeIs('admin.reportes.*') ? 'active' : '' }}" title="Gestión de Reportes">
                 <img src="{{ asset('img/img_sidebar/reportes.png') }}" alt="Reportes" class="sidebar-icon">
-                <span>Gestión de Reportes</span>
+                <span>Historial de <br>Movimientos</span>
             </a>
 
             <a href="{{ route('admin.usuarios.index') }}" class="sidebar-link {{ request()->routeIs('admin.usuarios.*') ? 'active' : '' }}" title="Gestión de Usuarios">
