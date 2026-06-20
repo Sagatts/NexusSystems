@@ -78,27 +78,12 @@ Route::middleware(['auth', 'role:administrador'])
         // =========================
         // REPORTES
         // =========================
-
         Route::prefix('reportes')->name('reportes.')->group(function () {
             
-            // Ruta principal (Historial) - Equivale a 'admin.reportes.index'
-            Route::get(
-                '/', 
-                [ReporteController::class, 'index']
-            )->name('index');
-
-            // Ruta de la vista de configuración - Equivale a 'admin.reportes.create'
-            Route::get(
-                '/configurar', 
-                [ReporteController::class, 'create']
-            )->name('create');
-
-            // Ruta que procesa y descarga el archivo - Equivale a 'admin.reportes.exportar'
-            Route::get(
-                '/exportar', 
-                [ReporteController::class, 'exportar']
-            )->name('exportar');
-
+            Route::get('/', [ReporteController::class, 'index'])->name('index');
+            Route::get('/configurar', [ReporteController::class, 'create'])->name('create');
+            Route::get('/exportar', [ReporteController::class, 'exportar'])->name('exportar');
+            Route::get('/previa-pdf', [ReporteController::class, 'previaPdf'])->name('previa.pdf');
         });
 });
 
