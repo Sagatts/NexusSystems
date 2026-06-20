@@ -195,4 +195,53 @@ class ReporteController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    // ==========================================
+    // 6. VISTA PREVIA PDF (EN PANTALLA DIVIDIDA)
+    // ==========================================
+    public function previaPdf(Request $request)
+    {
+        $fechaInicio = $request->query('fecha_inicio');
+        $fechaFin = $request->query('fecha_fin');
+
+        // Mismos JOINs de siempre
+        $movimientos = DB::table('DETALLE_RETIRO as dr')
+            ->join('RETIRO as r', 'dr.id_retiro', '=', 'r.id')
+            ->join('USUARIO as u', 'r.id_usuario', '=', 'u.rut')
+            ->join('PRODUCTO as p', 'dr.id_producto', '=', 'p.id')
+            ->select(
+                'u.rut',
+                'u.nombre as usuario',
+                'p.codigo_barras',
+                'p.nombre as producto',
+                'p.precio_neto',
+                'dr.cantidad',
+                'r.fecha_hora'
+            )
+            ->whereBetween('r.fecha_hora', [
+                $fechaInicio . ' 00:00:00', 
+                $fechaFin . ' 23:59:59'
+            ])
+            ->orderByDesc('r.fecha_hora')
+            ->get();
+
+        Carbon::setLocale('es');
+        $fechaActual = Carbon::now();
+
+        $data = [
+            'fecha' => $fechaActual->format('d/m/Y'),
+            'dia' => ucfirst($fechaActual->translatedFormat('l')),
+            'hora' => $fechaActual->format('H:i:s'),
+            'generado_por' => Auth::user()->nombre ?? Auth::user()->name ?? 'Administrador',
+            'fecha_inicio' => Carbon::parse($fechaInicio)->format('d/m/Y'),
+            'fecha_fin' => Carbon::parse($fechaFin)->format('d/m/Y'),
+            'movimientos' => $movimientos
+        ];
+
+        $pdf = Pdf::loadView('admin.reportes.pdf', $data);
+        $pdf->setPaper('A4', 'landscape'); 
+
+        return $pdf->stream('Vista_Previa.pdf');
+    }
+
 }

@@ -42,19 +42,10 @@ class ProductosImport implements ToModel, WithHeadingRow, WithValidation
         $productoExistente = Producto::where('codigo_barras', $row['codigo_barras'])->first();
 
         if ($productoExistente) {
-            // Le sumamos el stock nuevo al que ya existía en bodega
             $productoExistente->stock += $row['stock'];
-            
-            // Reemplazamos la fecha de vencimiento por la del lote nuevo
             $productoExistente->fecha_vencimiento = $fechaVencimiento;
-            
-            // Opcional: Si quieres que también se actualice el precio, puedes descomentar esto:
-            // $productoExistente->precio_neto = $row['precio_neto'];
-            
-            // Guardamos los cambios directos en la base de datos
+            $productoExistente->precio_neto = $row['precio_neto'];
             $productoExistente->save();
-
-            // Retornamos null para que Laravel Excel NO intente insertar una fila duplicada
             return null;
         }
 
