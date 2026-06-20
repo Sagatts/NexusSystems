@@ -16,8 +16,10 @@ Route::get('/', function () {
 
 Route::get('/dashboard',
     [DashboardController::class, 'index']
-)->middleware(['auth', 'role:administrador'])
- ->name('dashboard');
+)->middleware([
+    'auth',
+    'role:administrador'
+])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -108,9 +110,11 @@ Route::middleware(['auth', 'role:administrador'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:garzon,cocina'])
-    ->get('/pedidos', [PedidoController::class, 'index'])
-    ->name('pedidos.index');
+Route::middleware([
+    'auth',
+    'role:garzon,cocina'
+])->get('/pedidos', [PedidoController::class, 'index'])
+ ->name('pedidos.index');
     
 Route::post('/pedidos/procesar', [App\Http\Controllers\PedidoController::class, 'procesarPedido'])->name('pedidos.procesar');
 

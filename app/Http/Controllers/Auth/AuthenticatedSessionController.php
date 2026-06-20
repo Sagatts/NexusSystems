@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Usuario;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,7 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $user = auth()->user();
+        /** @var Usuario $user */
+        $user = Auth::user();
 
         switch ($user->rol) {
 
@@ -41,10 +43,9 @@ class AuthenticatedSessionController extends Controller
 
             default:
                 Auth::logout();
-
                 return redirect()->route('login');
         }
-}
+    }
 
     /**
      * Destroy an authenticated session.
