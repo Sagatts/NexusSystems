@@ -1,13 +1,10 @@
 <div class="card shadow-sm border-0 rounded-4">
-
     <div class="card-header bg-white">
         <h4 class="fw-bold mb-0">
             Información Personal
         </h4>
     </div>
-
     <div class="card-body">
-
         <form id="profileForm" method="POST" action="{{ route('profile.update') }}">
             @csrf
             @method('PATCH')
@@ -18,10 +15,9 @@
                     <label class="form-label fw-bold">
                         RUT
                     </label>
-
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-control bg-light"
                         value="{{ Auth::user()->rut }}"
                         readonly>
                 </div>
@@ -30,10 +26,9 @@
                     <label class="form-label fw-bold">
                         Rol
                     </label>
-
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-control bg-light"
                         value="{{ ucfirst(Auth::user()->rol) }}"
                         readonly>
                 </div>
@@ -42,7 +37,6 @@
                     <label class="form-label fw-bold">
                         Nombre
                     </label>
-
                     <input
                         type="text"
                         id="nombre"
@@ -63,7 +57,6 @@
                     <label class="form-label fw-bold">
                         Correo Electrónico
                     </label>
-
                     <input
                         type="email"
                         id="email"
@@ -83,8 +76,8 @@
             </div>
 
             <div class="mt-4 d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">
-                    Guardar Cambios
+                <button type="submit" class="btn btn-primary fw-bold shadow-sm">
+                    <i class="bi bi-save me-1"></i> Guardar Cambios
                 </button>
             </div>
 
@@ -93,6 +86,7 @@
     </div>
 
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -111,25 +105,20 @@ document.addEventListener('DOMContentLoaded', function() {
         email.classList.remove('is-invalid');
 
         if (nombre.value.trim() === '') {
-            document.getElementById('nombreError').innerHTML =
-                'Debe ingresar un nombre.';
+            document.getElementById('nombreError').innerHTML = 'Debe ingresar un nombre.';
             nombre.classList.add('is-invalid');
             valido = false;
         }
 
         if (email.value.trim() === '') {
-            document.getElementById('emailError').innerHTML =
-                'Debe ingresar un correo electrónico.';
+            document.getElementById('emailError').innerHTML = 'Debe ingresar un correo electrónico.';
             email.classList.add('is-invalid');
             valido = false;
-        }
-        else {
-            const regex =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        } else {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (!regex.test(email.value)) {
-                document.getElementById('emailError').innerHTML =
-                    'Debe ingresar un correo válido.';
+                document.getElementById('emailError').innerHTML = 'Debe ingresar un correo válido.';
                 email.classList.add('is-invalid');
                 valido = false;
             }
@@ -138,8 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!valido) {
             e.preventDefault();
         }
-
     });
-
 });
 </script>

@@ -27,6 +27,8 @@ class ProfileController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        $user = $request->user();
+
         $request->validate([
             'nombre' => [
                 'required',
@@ -37,25 +39,19 @@ class ProfileController extends Controller
             'email' => [
                 'required',
                 'email',
-                Rule::unique('usuario', 'email')
-                    ->ignore($request->user()->id),
+                // CORRECCIÓN: Le decimos explícitamente a Laravel que busque por la columna 'rut' 
+                // para ignorar al usuario actual en la verificación de unicidad.
+                Rule::unique('usuario', 'email')->ignore($user->rut, 'rut'),
             ],
         ], [
-
-            'nombre.required' =>
-                'Debe ingresar un nombre.',
-
-            'email.required' =>
-                'Debe ingresar un correo electrónico.',
-
-            'email.email' =>
-                'Debe ingresar un correo válido.',
-
-            'email.unique' =>
-                'Este correo electrónico ya está registrado.',
+            'nombre.required' => 'Debe ingresar un nombre.',
+            'email.required'  => 'Debe ingresar un correo electrónico.',
+            'email.email'     => 'Debe ingresar un correo válido.',
+            'email.unique'    => 'Este correo electrónico ya está registrado por otro usuario.',
         ]);
 
-        $request->user()->update([
+        // Actualización de los datos en la base de datos
+        $user->update([
             'nombre' => $request->nombre,
             'email'  => $request->email,
         ]);
@@ -85,6 +81,6 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/')
-            ->with('success', 'Perfil actualizado correctamente');
+            ->with('success', 'Cuenta eliminada correctamente.');
     }
 }

@@ -15,7 +15,7 @@ class ReporteController extends Controller
     // ==========================================
     public function index()
     {
-        // Ventas por mes
+        // Ventas por mes (Basado en Retiros / Salidas)
         $ventasMes = DB::table('DETALLE_RETIRO as dr')
             ->join('RETIRO as r', 'dr.id_retiro', '=', 'r.id')
             ->join('PRODUCTO as p', 'dr.id_producto', '=', 'p.id')
@@ -41,7 +41,7 @@ class ReporteController extends Controller
             $totalesVentas[] = $venta->total;
         }
 
-        // Productos más retirados
+        // Productos más retirados (Salidas)
         $productosMasRetirados = DB::table('DETALLE_RETIRO as dr')
             ->join('PRODUCTO as p', 'dr.id_producto', '=', 'p.id')
             ->select(
@@ -56,7 +56,23 @@ class ReporteController extends Controller
         $labelsProductos = $productosMasRetirados->pluck('nombre');
         $totalesProductos = $productosMasRetirados->pluck('total');
 
-        // Historial
+        // Historial Unificado (Entradas de PEDIDO + Salidas de RETIRO)
+        $entradas = DB::table('DETALLE_PEDIDO as dp')
+            ->join('PEDIDO as pe', 'dp.id_pedido', '=', 'pe.id')
+            ->join('USUARIO as u', 'pe.id_usuario', '=', 'u.rut')
+            ->join('PRODUCTO as p', 'dp.id_producto', '=', 'p.id')
+            ->select(
+                'u.rut',
+                'u.nombre as usuario',
+                'u.rol',
+                'p.codigo_barras',
+                'p.nombre as producto',
+                'p.precio_neto',
+                'dp.cantidad',
+                'pe.fecha as fecha_hora',
+                DB::raw("'Entrada' as tipo_movimiento")
+            );
+
         $movimientos = DB::table('DETALLE_RETIRO as dr')
             ->join('RETIRO as r', 'dr.id_retiro', '=', 'r.id')
             ->join('USUARIO as u', 'r.id_usuario', '=', 'u.rut')
@@ -64,13 +80,16 @@ class ReporteController extends Controller
             ->select(
                 'u.rut',
                 'u.nombre as usuario',
+                'u.rol',
                 'p.codigo_barras',
                 'p.nombre as producto',
                 'p.precio_neto',
                 'dr.cantidad',
-                'r.fecha_hora'
+                'r.fecha_hora',
+                DB::raw("'Salida' as tipo_movimiento")
             )
-            ->orderByDesc('r.fecha_hora')
+            ->union($entradas)
+            ->orderByDesc('fecha_hora')
             ->get();
 
         return view('admin.reportes.index', compact(
@@ -91,7 +110,7 @@ class ReporteController extends Controller
     }
 
     // ==========================================
-    // 3. PROCESAMIENTO DE EXPORTACIÓN
+    // 3. PROCESAMIENTO DE EXPORTACIÓN (PDF / CSV)
     // ==========================================
     public function exportar(Request $request)
     {
@@ -106,26 +125,8 @@ class ReporteController extends Controller
         $fechaInicio = $request->input('fecha_inicio');
         $fechaFin = $request->input('fecha_fin');
 
-        // Consulta filtrada utilizando la misma estructura de JOINs del index
-        $movimientos = DB::table('DETALLE_RETIRO as dr')
-            ->join('RETIRO as r', 'dr.id_retiro', '=', 'r.id')
-            ->join('USUARIO as u', 'r.id_usuario', '=', 'u.rut')
-            ->join('PRODUCTO as p', 'dr.id_producto', '=', 'p.id')
-            ->select(
-                'u.rut',
-                'u.nombre as usuario',
-                'p.codigo_barras',
-                'p.nombre as producto',
-                'p.precio_neto',
-                'dr.cantidad',
-                'r.fecha_hora'
-            )
-            ->whereBetween('r.fecha_hora', [
-                $fechaInicio . ' 00:00:00', 
-                $fechaFin . ' 23:59:59'
-            ])
-            ->orderByDesc('r.fecha_hora')
-            ->get();
+        // Obtener movimientos filtrados por rango de fecha con UNION unificado
+        $movimientos = $this->obtenerMovimientosFiltrados($fechaInicio, $fechaFin);
 
         if ($formato === 'csv') {
             return $this->generarCsv($movimientos);
@@ -135,7 +136,7 @@ class ReporteController extends Controller
     }
 
     // ==========================================
-    // 4. GENERACIÓN DE PDF
+    // 4. GENERACIÓN DE PDF (DESCARGA)
     // ==========================================
     private function generarPdf($movimientos, $fechaInicio, $fechaFin)
     {
@@ -174,19 +175,23 @@ class ReporteController extends Controller
 
         $callback = function() use($movimientos) {
             $file = fopen('php://output', 'w');
+            // Agregar BOM de UTF-8 para que Excel reconozca eñes y tildes correctamente
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             
-            fputcsv($file, ['RUT', 'Código Barras', 'Usuario', 'Producto', 'Cantidad', 'Precio Unitario', 'Total', 'Fecha y Hora']);
+            // Encabezados del CSV incluyendo Tipo de Movimiento
+            fputcsv($file, ['RUT', 'Código Barras', 'Usuario', 'Rol', 'Tipo Movimiento', 'Producto', 'Cantidad', 'Precio Unitario', 'Total', 'Fecha y Hora']);
 
             foreach ($movimientos as $mov) {
                 fputcsv($file, [
                     $mov->rut,
                     $mov->codigo_barras,
                     $mov->usuario,
+                    $mov->rol,
+                    $mov->tipo_movimiento,
                     $mov->producto,
                     $mov->cantidad,
                     $mov->precio_neto,
-                    $mov->precio_neto * $mov->cantidad, // Cálculo del total por fila
+                    $mov->precio_neto * $mov->cantidad, 
                     Carbon::parse($mov->fecha_hora)->format('d/m/Y H:i')
                 ]);
             }
@@ -197,33 +202,15 @@ class ReporteController extends Controller
     }
 
     // ==========================================
-    // 6. VISTA PREVIA PDF (EN PANTALLA DIVIDIDA)
+    // 6. VISTA PREVIA PDF (PANTALLA DIVIDIDA / STREAM)
     // ==========================================
     public function previaPdf(Request $request)
     {
         $fechaInicio = $request->query('fecha_inicio');
         $fechaFin = $request->query('fecha_fin');
 
-        // Mismos JOINs de siempre
-        $movimientos = DB::table('DETALLE_RETIRO as dr')
-            ->join('RETIRO as r', 'dr.id_retiro', '=', 'r.id')
-            ->join('USUARIO as u', 'r.id_usuario', '=', 'u.rut')
-            ->join('PRODUCTO as p', 'dr.id_producto', '=', 'p.id')
-            ->select(
-                'u.rut',
-                'u.nombre as usuario',
-                'p.codigo_barras',
-                'p.nombre as producto',
-                'p.precio_neto',
-                'dr.cantidad',
-                'r.fecha_hora'
-            )
-            ->whereBetween('r.fecha_hora', [
-                $fechaInicio . ' 00:00:00', 
-                $fechaFin . ' 23:59:59'
-            ])
-            ->orderByDesc('r.fecha_hora')
-            ->get();
+        // Reutilizamos la consulta con filtros por fecha
+        $movimientos = $this->obtenerMovimientosFiltrados($fechaInicio, $fechaFin);
 
         Carbon::setLocale('es');
         $fechaActual = Carbon::now();
@@ -244,4 +231,37 @@ class ReporteController extends Controller
         return $pdf->stream('Vista_Previa.pdf');
     }
 
+    // ==========================================
+    // FUNCIÓN AUXILIAR: Evita repetir SQL complejo
+    // ==========================================
+    private function obtenerMovimientosFiltrados($fechaInicio, $fechaFin)
+    {
+        $inicioCompleto = $fechaInicio . ' 00:00:00';
+        $finCompleto    = $fechaFin . ' 23:59:59';
+
+        $entradas = DB::table('DETALLE_PEDIDO as dp')
+            ->join('PEDIDO as pe', 'dp.id_pedido', '=', 'pe.id')
+            ->join('USUARIO as u', 'pe.id_usuario', '=', 'u.rut')
+            ->join('PRODUCTO as p', 'dp.id_producto', '=', 'p.id')
+            ->select(
+                'u.rut', 'u.nombre as usuario', 'u.rol', 'p.codigo_barras', 
+                'p.nombre as producto', 'p.precio_neto', 'dp.cantidad', 
+                'pe.fecha as fecha_hora', DB::raw("'Entrada' as tipo_movimiento")
+            )
+            ->whereBetween('pe.fecha', [$inicioCompleto, $finCompleto]);
+
+        return DB::table('DETALLE_RETIRO as dr')
+            ->join('RETIRO as r', 'dr.id_retiro', '=', 'r.id')
+            ->join('USUARIO as u', 'r.id_usuario', '=', 'u.rut')
+            ->join('PRODUCTO as p', 'dr.id_producto', '=', 'p.id')
+            ->select(
+                'u.rut', 'u.nombre as usuario', 'u.rol', 'p.codigo_barras', 
+                'p.nombre as producto', 'p.precio_neto', 'dr.cantidad', 
+                'r.fecha_hora', DB::raw("'Salida' as tipo_movimiento")
+            )
+            ->whereBetween('r.fecha_hora', [$inicioCompleto, $finCompleto])
+            ->union($entradas)
+            ->orderByDesc('fecha_hora')
+            ->get();
+    }
 }
