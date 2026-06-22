@@ -368,17 +368,16 @@
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Procesando...');
 
                 $.ajax({
-                    url: '{{ route("pedidos.procesar") }}', // La ruta en web.php
+                    url: '{{ route("pedidos.procesar") }}',
                     type: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}', // Llave de seguridad obligatoria en Laravel
+                        _token: '{{ csrf_token() }}',
                         productos: arregloProductosFinal 
                     },
                     success: function(response) {
                         $('#modalConfirmarPedido').modal('hide');
                         
                         if(response.success) {
-                            // Alerta de éxito y recargamos la página para ver el nuevo stock
                             Swal.fire({
                                 icon: 'success',
                                 title: '¡Retiro exitoso!',

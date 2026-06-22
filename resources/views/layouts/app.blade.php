@@ -147,38 +147,6 @@
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
     @stack('scripts')
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-        const btnBurger = document.getElementById("btnBurger");
-        const btnClose = document.getElementById("closeSidebarBtn"); // Agregamos la "X"
-        const sidebar = document.getElementById("sidebar");
-
-        // 1. Creamos una función con tu lógica original para poder reutilizarla
-        function toggleSidebar() {
-            sidebar.classList.toggle("collapsed");
-
-            // Actualizamos la memoria
-            if (sidebar.classList.contains("collapsed")) {
-                localStorage.setItem("barra_achicada", "true");
-            } else {
-                localStorage.setItem("barra_achicada", "false");
-            }
-        }
-
-        if (sidebar) {
-            // 2. Le damos la orden al botón de 3 líneas (si existe)
-            if (btnBurger) {
-                btnBurger.addEventListener("click", toggleSidebar);
-            }
-            
-            // 3. Le damos la MISMA orden al botón de la X (si existe)
-            if (btnClose) {
-                btnClose.addEventListener("click", toggleSidebar);
-                }
-         }
-        });
-    </script>
-
     @if(session('success'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
