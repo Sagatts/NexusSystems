@@ -10,9 +10,30 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\PedidoController;
 
 
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('/home', function () {
+
+    $user = auth()->user();
+
+    switch ($user->rol) {
+
+        case 'administrador':
+            return redirect()->route('dashboard');
+
+        case 'garzon':
+        case 'cocina':
+            return redirect()->route('pedidos.index');
+
+        default:
+            Auth::logout();
+            return redirect()->route('login');
+    }
+
+})->middleware('auth')->name('home');
 
 Route::get('/dashboard',
     [DashboardController::class, 'index']
