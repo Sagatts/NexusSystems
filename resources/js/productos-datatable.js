@@ -18,7 +18,7 @@ function initProductosDatatable() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: window.productosDatatableRoute || "/admin/productos-datatable",
+            url: window.productosDatatableRoute || "admin.productos-datatable",
             data: function (d) {
                 d.categoria = $('#filtro_categoria').val();
             }

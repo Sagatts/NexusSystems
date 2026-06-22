@@ -41,5 +41,6 @@
         </div>
     </div>
 
+    <script>window.usuariosDatatableRoute = "{{ route('admin.usuarios.datatable') }}";</script>
     @stack('scripts')
 </x-app-layout>

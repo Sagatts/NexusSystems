@@ -47,10 +47,7 @@ Route::middleware(['auth', 'role:administrador'])
         // PRODUCTOS
         // =========================
 
-        Route::get(
-            'productos-datatable',
-            [ProductoController::class, 'getProductos']
-        )->name('productos.datatable');
+        Route::get('productos-datatable',[ProductoController::class, 'getProductos'])->name('productos.datatable');
 
         Route::get('/productos/verificar-codigo', [ProductoController::class, 'verificarCodigo']);
         Route::get('productos/plantilla', [ProductoController::class, 'descargarPlantilla'])->name('productos.plantilla');
@@ -67,10 +64,7 @@ Route::middleware(['auth', 'role:administrador'])
         // USUARIOS
         // =========================
 
-        Route::get(
-            'usuarios-datatable',
-            [UsuarioController::class, 'getUsuarios']
-        )->name('usuarios.datatable');
+        Route::get('usuarios-datatable',[UsuarioController::class, 'getUsuarios'])->name('usuarios.datatable');
 
         Route::resource(
             'usuarios',

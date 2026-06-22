@@ -17,7 +17,7 @@ function initUsuariosDatatable() {
         scrollX: true,
         processing: true,
         serverSide: true,
-        ajax: window.usuariosDatatableRoute || "/admin/usuarios/datatable",
+        ajax: window.usuariosDatatableRoute || "admin.usuarios-datatable",
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
             search: "Buscar por nombre:"
