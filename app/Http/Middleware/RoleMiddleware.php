@@ -4,26 +4,36 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Usuario;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string  ...$roles
-     */
-    public function handle(Request $request, Closure $next, ...$roles): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!auth()->check()) {
-            return redirect('/login');
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
 
-        $user = auth()->user();
+        /** @var Usuario $user */
+        $user = Auth::user();
 
         if (!in_array(strtolower($user->rol), $roles)) {
-            abort(403, 'No tienes permiso para acceder a esta sección.');
+
+            switch (strtolower($user->rol)) {
+
+                case 'administrador':
+                    return redirect()->route('dashboard');
+
+                case 'garzon':
+                case 'cocina':
+                    return redirect()->route('pedidos.index');
+
+                default:
+                    Auth::logout();
+                    return redirect()->route('login');
+            }
         }
 
         return $next($request);

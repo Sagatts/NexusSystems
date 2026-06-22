@@ -5,16 +5,19 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Usuario;
 
 class RedirectIfAuthenticated
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check()) {
+        if (Auth::check()) {
 
-            $user = auth()->user();
+            /** @var Usuario $user */
+            $user = Auth::user();
 
-            switch ($user->rol) {
+            switch (strtolower($user->rol)) {
 
                 case 'administrador':
                     return redirect()->route('dashboard');
@@ -24,7 +27,7 @@ class RedirectIfAuthenticated
                     return redirect()->route('pedidos.index');
 
                 default:
-                    auth()->logout();
+                    Auth::logout();
                     return redirect()->route('login');
             }
         }

@@ -184,6 +184,20 @@
     color: #ef4444; /* Se pone rojo 'La Picá' al tocarlo */
 }
 
+/* El color normal del botón */
+.btn-corporativo {
+    background-color: #ff3333; 
+    border-color: #ff3333;
+    transition: all 0.3s ease; 
+}
+
+/* El efecto cuando pasas el mouse por encima (hover) */
+.btn-corporativo:hover {
+    background-color: #e62e2e; /* Un tono un poquito más oscuro */
+    border-color: #e62e2e;
+    transform: translateY(-2px); /* Un leve saltito hacia arriba muy sutil */
+}
+
 /* --- RESPONSIVE PARA CELULARES (Pantallas menores a 768px) --- */
 @media (max-width: 768px) {
     

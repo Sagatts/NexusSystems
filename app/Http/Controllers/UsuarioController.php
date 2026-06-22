@@ -7,6 +7,7 @@ use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UsuarioController extends Controller
 {
@@ -17,28 +18,33 @@ class UsuarioController extends Controller
 
     public function create()
     {
-        // Ya no necesitamos traer categorías
         return view('admin.usuarios.create');
     }
 
     public function getUsuarios()
     {
+        // Obtenemos el RUT del usuario autenticado de forma segura
+        $rutAutenticado = Auth::user()->rut ?? null;
+
+        // Si hay un usuario logueado, lo excluimos. Si no, traemos todos.
         $usuarios = Usuario::query();
+        if ($rutAutenticado) {
+            $usuarios->where('rut', '!=', $rutAutenticado);
+        }
 
         return DataTables::of($usuarios)
-
             ->filter(function ($query) {
-
                 $search = request('search')['value'] ?? '';
 
                 if (!empty($search)) {
-                    $query->where('nombre', 'like', "%{$search}%")
+                    // Agrupamos el buscador para que el "orWhere" no altere el filtro anterior
+                    $query->where(function ($q) use ($search) {
+                        $q->where('nombre', 'like', "%{$search}%")
                           ->orWhere('rut', 'like', "%{$search}%");
+                    });
                 }
             })
-
             ->addColumn('acciones', function ($usuario) {
-
                 return '
                     <a href="'.route('admin.usuarios.edit', $usuario->rut).'" class="btn btn-warning btn-sm">
                         Editar
@@ -49,9 +55,7 @@ class UsuarioController extends Controller
                     </button>
                 ';
             })
-
             ->rawColumns(['acciones'])
-
             ->make(true);
     }
 
@@ -59,7 +63,6 @@ class UsuarioController extends Controller
     {
         $data = $request->validated();
         
-        // Encriptar la contraseña antes de guardar en la BD
         if (!empty($data['contrasena'])) {
             $data['contrasena'] = Hash::make($data['contrasena']);
         }
@@ -68,28 +71,18 @@ class UsuarioController extends Controller
 
         return redirect()
             ->route('admin.usuarios.index')
-            ->with(
-                'success',
-                'Usuario creado correctamente'
-            );
+            ->with('success', 'Usuario creado correctamente');
     }
 
     public function edit(Usuario $usuario)
     {
-        return view(
-            'admin.usuarios.edit',
-            compact('usuario')
-        );
+        return view('admin.usuarios.edit', compact('usuario'));
     }
 
-    public function update(
-        UserRequest $request,
-        Usuario $usuario
-    )
+    public function update(UserRequest $request, Usuario $usuario)
     {
         $data = $request->validated();
 
-        // Si se ingresó una nueva contraseña, la encriptamos. Si no, la ignoramos.
         if (!empty($data['contrasena'])) {
             $data['contrasena'] = Hash::make($data['contrasena']);
         } else {
@@ -100,10 +93,7 @@ class UsuarioController extends Controller
 
         return redirect()
             ->route('admin.usuarios.index')
-            ->with(
-                'success',
-                'Usuario actualizado correctamente'
-            );
+            ->with('success', 'Usuario actualizado correctamente');
     }
 
     public function destroy($rut)

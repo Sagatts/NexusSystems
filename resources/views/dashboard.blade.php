@@ -7,7 +7,9 @@
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
            ¡Bienvenido, {{ trim(Auth::user()->nombre) }}!
      </h2>
-    <div class="dashboard-wrapper">
+
+     
+    <div class="dashboard-wrapper px-2 px-md-4">
         
         <div class="dashboard-top-wrapper">
             <span class="dashboard-box-title">Resumen de ventas mensuales</span>
@@ -138,235 +140,17 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    
-    
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    // ==========================
-    // RESUMEN DE VENTAS MENSUALES
-    // ==========================
-
-    const ventasCtx = document.getElementById('graficoVentas');
-
-    if (ventasCtx) {
-        new Chart(ventasCtx, {
-            type: 'line',
-
-            data: {
-                labels: @json($labels),
-
-                datasets: [{
-                    label: 'Ventas Mensuales ($)',
-                    data: @json($totales),
-
-                    borderColor: '#ff3333',
-                    backgroundColor: 'rgba(255, 51, 51, 0.15)',
-
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-
-                    pointRadius: 5,
-                    pointHoverRadius: 8
-                }]
-            },
-
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-
-                plugins: {
-                    legend: {
-                        display: true
-                    },
-
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return '$' +
-                                    context.raw.toLocaleString('es-CL');
-                            }
-                        }
-                    }
-                },
-
-                scales: {
-                    y: {
-                        beginAtZero: true,
-
-                        ticks: {
-                            callback: function(value) {
-                                return '$' +
-                                    value.toLocaleString('es-CL');
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-
-    // ==========================
-    // PRODUCTOS MÁS / MENOS RETIRADOS
-    // ==========================
-
-    const labelsMas = @json($labelsMasRetirados);
-    const datosMas = @json($totalesMasRetirados);
-
-    const labelsMenos = @json($labelsMenosRetirados);
-    const datosMenos = @json($totalesMenosRetirados);
-
-    const ctxProductos =
-        document.getElementById('graficoProductos');
-
-    let graficoProductos = null;
-
-    if (ctxProductos) {
-
-        graficoProductos = new Chart(ctxProductos, {
-
-            type: 'bar',
-
-            data: {
-                labels: labelsMas,
-
-                datasets: [{
-                    label: 'Cantidad Retirada',
-
-                    data: datosMas,
-
-                    backgroundColor: '#ff3333',
-                    borderColor: '#e62e2e',
-                    borderWidth: 1,
-                    borderRadius: 8
-                }]
-            },
-
-            options: {
-                indexAxis: 'y',
-
-                responsive: true,
-                maintainAspectRatio: false,
-
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }
-
-
-    // Selector Más / Menos retirados
-
-    document.getElementById('tipoGraficoProductos')
-        ?.addEventListener('change', function () {
-
-            if (!graficoProductos) return;
-
-            if (this.value === 'mas') {
-
-                graficoProductos.data.labels = labelsMas;
-                graficoProductos.data.datasets[0].data = datosMas;
-                graficoProductos.data.datasets[0].backgroundColor = '#ff3333';
-                graficoProductos.data.datasets[0].borderColor = '#e62e2e';
-
-            } else {
-
-                graficoProductos.data.labels = labelsMenos;
-                graficoProductos.data.datasets[0].data = datosMenos;
-                graficoProductos.data.datasets[0].backgroundColor = '#374151';
-                graficoProductos.data.datasets[0].borderColor = '#1f2937';
-            }
-
-            graficoProductos.update();
-        });
-
-
-    // ==========================
-    // VENTAS POR CATEGORÍA
-    // ==========================
-
-    const ctxCategorias =
-        document.getElementById('graficoCategorias');
-
-    if (ctxCategorias) {
-
-        new Chart(ctxCategorias, {
-
-            type: 'bar',
-
-            data: {
-
-                labels: @json($labelsCategorias),
-
-                datasets: [{
-                    label: 'Ventas ($)',
-
-                    data: @json($totalesCategorias),
-
-                    backgroundColor: '#ff3333',
-                    borderColor: '#e62e2e',
-                    borderWidth: 1,
-                    borderRadius: 8
-                }]
-            },
-
-            options: {
-
-                indexAxis: 'y',
-
-                responsive: true,
-                maintainAspectRatio: false,
-
-                plugins: {
-
-                    legend: {
-                        display: false
-                    },
-
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-
-                                return '$' +
-                                    context.raw.toLocaleString('es-CL');
-
-                            }
-                        }
-                    }
-                },
-
-                scales: {
-
-                    x: {
-
-                        beginAtZero: true,
-
-                        ticks: {
-                            callback: function(value) {
-                                return '$' +
-                                    value.toLocaleString('es-CL');
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-});
-</script>
+    <script>
+        window.labelsVentas = @json($labels);
+        window.totalesVentas = @json($totales);
+        window.labelsMasRetirados = @json($labelsMasRetirados);
+        window.totalesMasRetirados = @json($totalesMasRetirados);
+        window.labelsMenosRetirados = @json($labelsMenosRetirados);
+        window.totalesMenosRetirados = @json($totalesMenosRetirados);
+        window.labelsCategorias = @json($labelsCategorias);
+        window.totalesCategorias = @json($totalesCategorias);
+    </script>
+
+    @stack('scripts')
 
 </x-app-layout>
