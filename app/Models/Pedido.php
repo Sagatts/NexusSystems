@@ -6,15 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
-    protected $table = 'PEDIDO';
-    public $timestamps = false;
+    protected $table = 'pedido'; // Nombre de tu tabla
 
-    protected $fillable = ['fecha', 'id_usuario'];
+    protected $fillable = [
+        'fecha',
+        'id_usuario'
+    ];
 
-    public function usuario()
-    {
-        return $this->belongsTo(Usuario::class, 'id_usuario');
-    }
+    public $timestamps = false; // Quitar si tu tabla no tiene created_at/updated_at
 
     public function detalles()
     {

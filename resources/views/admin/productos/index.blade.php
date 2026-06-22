@@ -23,16 +23,14 @@
             </div>
 
             <div class="card-body p-4">
-    
-                <select id="filtro_categoria" class="form-select form-select-sm d-inline-block w-auto me-3 d-none">
+                
+                <select id="filtro_categoria" class="form-select form-select-sm d-inline-block w-auto me-3 d-none mb-3">
                     <option value="">Todas las categorías</option>
                     @foreach($categorias as $categoria)
                         <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
                     @endforeach
                 </select>
 
-                
-                    
                 <table id="tablaProductos" class="table table-striped table-hover align-middletext-nowrap" style="width: 100%;">
                     <thead class="table-dark">
                         <tr>
@@ -50,6 +48,8 @@
                 </table>
                 
             </div>
+
+        </div>
 
     </div>
 

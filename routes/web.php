@@ -16,8 +16,10 @@ Route::get('/', function () {
 
 Route::get('/dashboard',
     [DashboardController::class, 'index']
-)->middleware(['auth', 'role:administrador'])
- ->name('dashboard');
+)->middleware([
+    'auth',
+    'role:administrador'
+])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -50,14 +52,16 @@ Route::middleware(['auth', 'role:administrador'])
             [ProductoController::class, 'getProductos']
         )->name('productos.datatable');
 
+        Route::get('/productos/verificar-codigo', [ProductoController::class, 'verificarCodigo']);
+        Route::get('productos/plantilla', [ProductoController::class, 'descargarPlantilla'])->name('productos.plantilla');
+        Route::post('productos/importar', [ProductoController::class, 'importar'])->name('productos.importar');
+
         Route::resource(
             'productos',
             ProductoController::class
         );
 
         Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('admin.productos.update');
-
-        Route::get('/productos/verificar-codigo', [ProductoController::class, 'verificarCodigo']);
 
         // =========================
         // USUARIOS
@@ -76,27 +80,12 @@ Route::middleware(['auth', 'role:administrador'])
         // =========================
         // REPORTES
         // =========================
-
         Route::prefix('reportes')->name('reportes.')->group(function () {
             
-            // Ruta principal (Historial) - Equivale a 'admin.reportes.index'
-            Route::get(
-                '/', 
-                [ReporteController::class, 'index']
-            )->name('index');
-
-            // Ruta de la vista de configuración - Equivale a 'admin.reportes.create'
-            Route::get(
-                '/configurar', 
-                [ReporteController::class, 'create']
-            )->name('create');
-
-            // Ruta que procesa y descarga el archivo - Equivale a 'admin.reportes.exportar'
-            Route::get(
-                '/exportar', 
-                [ReporteController::class, 'exportar']
-            )->name('exportar');
-
+            Route::get('/', [ReporteController::class, 'index'])->name('index');
+            Route::get('/configurar', [ReporteController::class, 'create'])->name('create');
+            Route::get('/exportar', [ReporteController::class, 'exportar'])->name('exportar');
+            Route::get('/previa-pdf', [ReporteController::class, 'previaPdf'])->name('previa.pdf');
         });
 });
 
@@ -106,10 +95,13 @@ Route::middleware(['auth', 'role:administrador'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:garzon,cocina'])
-    ->get('/pedidos', [PedidoController::class, 'index'])
-    ->name('pedidos.index');
-    Route::post('/pedidos/procesar', [App\Http\Controllers\PedidoController::class, 'procesarPedido'])->name('pedidos.procesar');
+Route::middleware([
+    'auth',
+    'role:garzon,cocina'
+])->get('/pedidos', [PedidoController::class, 'index'])
+ ->name('pedidos.index');
+    
+Route::post('/pedidos/procesar', [App\Http\Controllers\PedidoController::class, 'procesarPedido'])->name('pedidos.procesar');
 
 
 require __DIR__.'/auth.php';
