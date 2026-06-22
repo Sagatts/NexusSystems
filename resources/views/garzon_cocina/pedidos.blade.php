@@ -271,8 +271,15 @@
                     success: function(response) {
                         $('#modalConfirmarPedido').modal('hide');
                         if(response.success) {
-                            Swal.fire({ icon: 'success', title: '¡Retiro exitoso!', text: response.message, showConfirmButton: false, timer: 2000 })
-                            .then(() => { location.reload(); });
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Retiro exitoso!',
+                                text: 'Los productos han sido descontados del inventario.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                location.reload(); 
+                            });
                         } else {
                             Swal.fire('Error en transacción', response.message, 'error');
                             btn.prop('disabled', false).text('Confirmar y Descontar');
