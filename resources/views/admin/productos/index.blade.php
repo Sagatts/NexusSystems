@@ -54,5 +54,6 @@
     </div>
 
     <script>window.productosDatatableRoute = "{{ route('admin.productos.datatable') }}";</script>
+    <script>window.appUrl = "{{ url('/') }}";</script>
     @stack('scripts')
 </x-app-layout>

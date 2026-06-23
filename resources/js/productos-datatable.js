@@ -49,40 +49,26 @@ function initProductosDatatable() {
     window.abrirModalEliminar = function(id) {
         Swal.fire({
             title: '¿Estás seguro?',
-            text: "Esta acción eliminará el producto del inventario de forma permanente.",
+            text: "Esta acción no se puede deshacer",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/admin/productos/" + id,
+                    url: window.appUrl + `/admin/productos/${id}`,  // ← usa appUrl
                     type: 'POST',
                     data: {
                         _method: 'DELETE',
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Eliminado!',
-                                text: 'El producto ha sido removido.',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            tabla.ajax.reload();
-                        }
+                        Swal.fire('Eliminado', 'Producto eliminado correctamente', 'success');
+                        // recarga tu DataTable aquí
                     },
                     error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Hubo un error al intentar eliminar el producto.'
-                        });
+                        Swal.fire('Error', 'No se pudo eliminar el producto', 'error');
                     }
                 });
             }
