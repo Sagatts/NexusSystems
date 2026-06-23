@@ -5,6 +5,32 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    // ==========================================
+    // LÓGICA PARA EL INPUT DE EXCEL (Carga Masiva)
+    // ==========================================
+    const inputExcel = document.getElementById('archivo_excel');
+    const textoVisual = document.getElementById('nombre_archivo_visual');
+
+    // Solo se ejecuta si los elementos existen en la vista actual
+    if (inputExcel && textoVisual) {
+        inputExcel.addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                // Muestra el nombre y lo pone en verde
+                textoVisual.textContent = this.files[0].name;
+                textoVisual.classList.remove('text-muted');
+                textoVisual.classList.add('text-success', 'fw-bold');
+            } else {
+                // Vuelve al estado por defecto si cancelan
+                textoVisual.textContent = 'Ningún archivo seleccionado';
+                textoVisual.classList.add('text-muted');
+                textoVisual.classList.remove('text-success', 'fw-bold');
+            }
+        });
+    }
+
+    // ==========================================
+    // LÓGICA DE VALIDACIÓN DEL FORMULARIO MANUAL
+    // ==========================================
     const form = document.getElementById('productoForm');
 
     if (!form) return;
