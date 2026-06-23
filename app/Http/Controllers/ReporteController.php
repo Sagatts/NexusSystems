@@ -156,7 +156,7 @@ class ReporteController extends Controller
         $pdf = Pdf::loadView('admin.reportes.pdf', $data);
         $pdf->setPaper('A4', 'landscape'); 
 
-        return $pdf->download('Reporte_Movimientos_' . $fechaActual->format('Ymd_His') . '.pdf');
+        return $pdf->download('Reporte_Movimientos_' . $fechaActual->format('d-m-Y_H-i-s') . '.pdf');
     }
 
     // ==========================================
@@ -164,7 +164,7 @@ class ReporteController extends Controller
     // ==========================================
     private function generarCsv($movimientos)
     {
-        $fileName = 'Reporte_Movimientos_' . date('Ymd_His') . '.csv';
+        $fileName = 'Reporte_Movimientos_' . date('d-m-Y_H-i-s') . '.csv';
         $headers = [
             "Content-type"        => "text/csv; charset=UTF-8",
             "Content-Disposition" => "attachment; filename=$fileName",
@@ -230,6 +230,8 @@ class ReporteController extends Controller
 
         return $pdf->stream('Vista_Previa.pdf');
     }
+
+    
 
     // ==========================================
     // FUNCIÓN AUXILIAR: Evita repetir SQL complejo

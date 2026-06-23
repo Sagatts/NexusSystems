@@ -3,56 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Reporte de Movimientos - NexusSystems</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            color: #333;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #dc3545; /* Rojo corporativo */
-            padding-bottom: 10px;
-        }
-        .header h2 {
-            margin: 0;
-            font-size: 18px;
-            text-transform: uppercase;
-        }
-        .info-auditoria {
-            width: 100%;
-            margin-bottom: 20px;
-            border-collapse: collapse;
-        }
-        .info-auditoria td {
-            padding: 4px;
-            font-size: 11px;
-        }
-        .tabla-datos {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .tabla-datos th, .tabla-datos td {
-            border: 1px solid #ddd;
-            padding: 6px;
-            text-align: left;
-        }
-        .tabla-datos th {
-            background-color: #f4f4f4;
-            font-weight: bold;
-        }
-        .footer {
-            position: fixed;
-            bottom: -10px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 9px;
-            color: #777;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ public_path('css/reportes.css') }}">
 </head>
 <body>
 
@@ -76,7 +27,7 @@
             <tr>
                 <th>RUT</th>
                 <th>Usuario</th>
-                <th>Cód. Barras</th>
+                <th>Rol / Área</th> <th>Tipo</th>       <th>Cód. Barras</th>
                 <th>Producto</th>
                 <th>Cantidad</th>
                 <th>Total</th>
@@ -88,9 +39,20 @@
                 <tr>
                     <td>{{ $mov->rut }}</td>
                     <td>{{ $mov->usuario }}</td>
+                    
+                    <td align="center">{{ ucfirst($mov->rol ?? 'N/A') }}</td>
+                    
+                    <td align="center">
+                        @if(strtolower($mov->tipo_movimiento) === 'entrada')
+                            <span class="badge-entrada">Entrada</span>
+                        @else
+                            <span class="badge-salida">Salida</span>
+                        @endif
+                    </td>
+                    
                     <td>{{ $mov->codigo_barras }}</td>
                     <td>{{ $mov->producto }}</td>
-                    <td style="text-align: center;">{{ $mov->cantidad }}</td>
+                    <td align="center">{{ $mov->cantidad }}</td>
                     <td>${{ number_format($mov->precio_neto * $mov->cantidad, 0, ',', '.') }}</td>
                     <td>{{ \Carbon\Carbon::parse($mov->fecha_hora)->format('d/m/Y H:i') }}</td>
                 </tr>
