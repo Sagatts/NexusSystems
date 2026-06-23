@@ -49,40 +49,26 @@ function initProductosDatatable() {
     window.abrirModalEliminar = function(id) {
         Swal.fire({
             title: '¿Estás seguro?',
-            text: "Esta acción eliminará el producto del inventario de forma permanente.",
+            text: "Esta acción no se puede deshacer",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/admin/productos/" + id,
-                    type: 'POST',
+                    url: `/admin/productos/${id}`,
+                    type: 'POST',                   // POST porque HTML no soporta DELETE
                     data: {
-                        _method: 'DELETE',
-                        _token: $('meta[name="csrf-token"]').attr('content')
+                        _method: 'DELETE',           // ← esto es el "method spoofing" de Laravel
+                        _token: $('meta[name="csrf-token"]').attr('content')  // ← CSRF obligatorio
                     },
                     success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Eliminado!',
-                                text: 'El producto ha sido removido.',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            tabla.ajax.reload();
-                        }
+                        Swal.fire('Eliminado', 'Producto eliminado correctamente', 'success');
+                        // recarga tu DataTable aquí, ej: tabla.ajax.reload();
                     },
                     error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Hubo un error al intentar eliminar el producto.'
-                        });
+                        Swal.fire('Error', 'No se pudo eliminar el producto', 'error');
                     }
                 });
             }

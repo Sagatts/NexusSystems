@@ -74,11 +74,8 @@ Route::middleware(['auth', 'role:administrador'])
         Route::get('productos/plantilla', [ProductoController::class, 'descargarPlantilla'])->name('productos.plantilla');
         Route::post('productos/importar', [ProductoController::class, 'importar'])->name('productos.importar');
 
-        Route::resource(
-            'productos',
-            ProductoController::class
-        );
-
+        Route::resource('productos', ProductoController::class);
+        Route::delete('productos/{id}', [ProductoController::class, 'destroy'])->name('productos.destroy');
         Route::put('/productos/{producto}', [ProductoController::class, 'update'])->name('admin.productos.update');
 
         // =========================
