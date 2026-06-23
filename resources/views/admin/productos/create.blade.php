@@ -58,7 +58,7 @@
                             <span id="nombre_archivo_visual" class="text-muted small mx-2 text-break">Ningún archivo seleccionado</span>
                             
                             <button type="submit" class="btn btn-success btn-sm text-white fw-bold shadow-sm">
-                                <i class="bi bi-cloud-arrow-up me-1"></i> Importar
+                                <i class="bi bi-cloud-arrow-up me-1"></i> Cargar Datos
                             </button>
                         </form>
                     </div>

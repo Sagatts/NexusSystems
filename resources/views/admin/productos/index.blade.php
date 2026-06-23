@@ -17,7 +17,7 @@
 
                 <a href="{{ route('admin.productos.create') }}" class="btn btn-success shadow-sm fw-bold">
                     <i class="bi bi-plus-circle me-1"></i>
-                    Nuevo Producto
+                    Agregar Producto
                 </a>
 
             </div>
@@ -54,5 +54,6 @@
     </div>
 
     <script>window.productosDatatableRoute = "{{ route('admin.productos.datatable') }}";</script>
+    <script>window.appUrl = "{{ url('/') }}";</script>
     @stack('scripts')
 </x-app-layout>

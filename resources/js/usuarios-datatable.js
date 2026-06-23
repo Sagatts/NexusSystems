@@ -43,7 +43,7 @@ function initUsuariosDatatable() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "/admin/usuarios/" + rut,
+                    url: window.appUrl + `/admin/usuarios/${rut}`,  // ← usa appUrl
                     type: 'POST',
                     data: {
                         _method: 'DELETE',

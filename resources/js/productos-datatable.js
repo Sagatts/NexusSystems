@@ -57,15 +57,15 @@ function initProductosDatatable() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/admin/productos/${id}`,
-                    type: 'POST',                   // POST porque HTML no soporta DELETE
+                    url: window.appUrl + `/admin/productos/${id}`,  // ← usa appUrl
+                    type: 'POST',
                     data: {
                         _method: 'DELETE',           // ← esto es el "method spoofing" de Laravel
                         _token: $('meta[name="csrf-token"]').attr('content')  // ← CSRF obligatorio
                     },
                     success: function(response) {
                         Swal.fire('Eliminado', 'Producto eliminado correctamente', 'success');
-                        // recarga tu DataTable aquí, ej: tabla.ajax.reload();
+                        // recarga tu DataTable aquí
                     },
                     error: function(xhr) {
                         Swal.fire('Error', 'No se pudo eliminar el producto', 'error');

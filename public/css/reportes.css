@@ -1,0 +1,49 @@
+/* VISTA PREVIA Y PDF*/
+body {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #333;
+}
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #dc3545; /* Rojo corporativo */
+    padding-bottom: 10px;
+}
+.header h2 {
+    margin: 0;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+.info-auditoria {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+.info-auditoria td {
+    padding: 4px;
+    font-size: 11px;
+}
+.tabla-datos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.tabla-datos th, .tabla-datos td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: left;
+}
+.tabla-datos th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+.footer {
+    position: fixed;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9px;
+    color: #777;
+}
