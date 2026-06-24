@@ -110,8 +110,6 @@ cd NexusSystems
 ```bash
 composer install
 npm install
-composer require yajra/laravel-datatables-oracl
-composer require barryvdh/laravel-dompdf
 ```
 
 ### Configurar entorno
@@ -139,9 +137,6 @@ DB_PORT=3306
 DB_DATABASE=Lapicadeyiyo
 DB_USERNAME=root
 DB_PASSWORD=
-
-MAIL_USERNAME=tu_correo@gmail.com
-MAIL_PASSWORD=tu_password_de_aplicacion
 ```
 
 ### Ejecutar migraciones
@@ -150,13 +145,14 @@ MAIL_PASSWORD=tu_password_de_aplicacion
 php artisan migrate:fresh --seed
 ```
 
-### Crear enlace simbólico
+
+### Compilar assets:
 
 ```bash
-php artisan storage:link
+npm run build
 ```
 
-### Iniciar servidor
+### Compilar assets:
 
 ```bash
 php artisan serve

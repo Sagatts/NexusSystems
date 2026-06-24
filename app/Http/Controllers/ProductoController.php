@@ -86,8 +86,13 @@ class ProductoController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'codigo_barras' => 'required|string|max:100|unique:producto,codigo_barras',
-            'id_categoria' => 'required|exists:categoria,id',
+            'codigo_barras' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('PRODUCTO', 'codigo_barras')->whereNull('deleted_at'), // ← ignora eliminados
+            ],
+            'id_categoria' => 'required|exists:CATEGORIA,id',
             'precio_neto' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'fecha_vencimiento' => 'required|date|after_or_equal:today',
@@ -106,19 +111,15 @@ class ProductoController extends Controller
 
         return redirect()
             ->route('admin.productos.index')
-            ->with(
-                'success',
-                'Producto creado correctamente'
-            );
+            ->with('success', 'Producto creado correctamente');
     }
 
     public function verificarCodigo(Request $request)
     {
         return response()->json([
-            'existe' => Producto::where(
-                'codigo_barras',
-                $request->codigo
-            )->exists()
+            'existe' => Producto::where('codigo_barras', $request->codigo)
+                ->whereNull('deleted_at')  // ← ignora eliminados
+                ->exists()
         ]);
     }
 
@@ -140,7 +141,7 @@ class ProductoController extends Controller
             'nombre' => 'required|string|max:255',
             'codigo_barras' => [
                 'required',
-                Rule::unique('producto', 'codigo_barras')->ignore($producto->id)
+                Rule::unique('PRODUCTO', 'codigo_barras')->ignore($producto->id)->whereNull('deleted_at'), // ← por consistencia
             ],
             'id_categoria' => 'required|exists:categoria,id',
             'precio_neto' => 'required|numeric|min:0',

@@ -4,7 +4,6 @@
             Crear Nuevo Producto
         </h2>
     </x-slot>
-
     <div class="container-fluid mt-4">
 
         <div class="card shadow-sm border-0 rounded-4">
