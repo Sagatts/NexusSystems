@@ -21,12 +21,14 @@
                             
                             <div class="mb-3">
                                 <label for="fecha_inicio" class="form-label fw-bold">Fecha Desde</label>
-                                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control shadow-sm" required>
+                                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control shadow-sm">
+                                <div id="fecha_inicioError" class="text-danger small mt-1"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="fecha_fin" class="form-label fw-bold">Fecha Hasta</label>
-                                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control shadow-sm" required>
+                                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control shadow-sm">
+                                <div id="fecha_finError" class="text-danger small mt-1"></div>
                             </div>
 
                             <button type="button" id="btnVistaPrevia" class="btn btn-corporativo text-white fw-bold shadow-sm w-100 mb-4">
@@ -81,6 +83,18 @@
     <script>
         $(document).ready(function() {
             
+            function limpiarErrores() {
+                $('#fecha_inicio').removeClass('is-invalid');
+                $('#fecha_fin').removeClass('is-invalid');
+                $('#fecha_inicioError').text('');
+                $('#fecha_finError').text('');
+            }
+
+            function mostrarError(campo, mensaje) {
+                campo.addClass('is-invalid');
+                $('#' + campo.attr('id') + 'Error').text(mensaje);
+            }
+
             $('#btnVistaPrevia').click(function() {
                 let fechaInicio = $('#fecha_inicio').val();
                 let fechaFin = $('#fecha_fin').val();
@@ -121,6 +135,34 @@
                     $('#loadingSpinner').addClass('d-none');
                     iframe.removeClass('d-none');
                 });
+            });
+
+            // Validación al enviar el formulario de descarga
+            $('form[action="{{ route('admin.reportes.exportar') }}"]').submit(function(e) {
+                limpiarErrores();
+
+                let fechaInicio = $('#fecha_inicio').val();
+                let fechaFin = $('#fecha_fin').val();
+                let valido = true;
+
+                if (!fechaInicio) {
+                    mostrarError($('#fecha_inicio'), 'Debes seleccionar la fecha de inicio.');
+                    valido = false;
+                }
+
+                if (!fechaFin) {
+                    mostrarError($('#fecha_fin'), 'Debes seleccionar la fecha de termino.');
+                    valido = false;
+                }
+
+                if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
+                    mostrarError($('#fecha_inicio'), 'La fecha de inicio no puede ser mayor a la fecha de termino.');
+                    valido = false;
+                }
+
+                if (!valido) {
+                    e.preventDefault();
+                }
             });
 
         });
