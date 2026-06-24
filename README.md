@@ -152,7 +152,7 @@ php artisan migrate:fresh --seed
 npm run build
 ```
 
-### Compilar assets:
+### Iniciar:
 
 ```bash
 php artisan serve
