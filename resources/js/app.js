@@ -17,6 +17,7 @@ import './sidebar';
 import './perfil-form';
 import './productos-datatable';
 import './update-password-form';
+import './disable-html-validation';
 
 window.Chart = Chart;
 
