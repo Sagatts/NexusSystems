@@ -82,6 +82,70 @@ class ProductoController extends Controller
             ->make(true);
     }
 
+    public function guardarCategoria(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:100|unique:CATEGORIA,nombre',
+        ], [
+            'nombre.required' => 'Debe ingresar el nombre de la categoría.',
+            'nombre.unique' => 'Ya existe una categoría con ese nombre.',
+        ]);
+
+        $categoria = Categoria::create(['nombre' => $request->nombre]);
+
+        return response()->json([
+            'success' => true,
+            'categoria' => [
+                'id' => $categoria->id,
+                'nombre' => $categoria->nombre
+            ]
+        ]);
+    }
+
+    public function obtenerCategorias()
+    {
+        $categorias = Categoria::orderBy('nombre')->get();
+        return response()->json($categorias);
+    }
+
+    public function actualizarCategoria(Request $request, $id)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:100|unique:CATEGORIA,nombre,' . $id,
+        ], [
+            'nombre.required' => 'Debe ingresar el nombre de la categoría.',
+            'nombre.unique' => 'Ya existe una categoría con ese nombre.',
+        ]);
+
+        $categoria = Categoria::find($id);
+        if (!$categoria) {
+            return response()->json(['success' => false, 'message' => 'Categoría no encontrada.'], 404);
+        }
+
+        $categoria->update(['nombre' => $request->nombre]);
+        return response()->json(['success' => true, 'categoria' => $categoria]);
+    }
+
+    public function eliminarCategoria($id)
+    {
+        $categoria = Categoria::find($id);
+        if (!$categoria) {
+            return response()->json(['success' => false, 'message' => 'Categoría no encontrada.'], 404);
+        }
+
+        // Buscar o crear la categoría "Sin categoría"
+        $sinCategoria = Categoria::firstOrCreate(
+            ['nombre' => 'Sin categoría'],
+            ['nombre' => 'Sin categoría']
+        );
+
+        // Mover productos a "Sin categoría"
+        $categoria->productos()->update(['id_categoria' => $sinCategoria->id]);
+
+        $categoria->delete();
+        return response()->json(['success' => true]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
