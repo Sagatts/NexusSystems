@@ -12,6 +12,7 @@
     <link href="{{ asset('css/login.css') }}" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" href="{{ asset('img/logo-yiyo.png') }}" type="image/png">
 </head>
 <body>
     <div class="bg-overlay">
