@@ -106,21 +106,26 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="id_categoria" class="form-label fw-bold">Categoría</label>
-                            <select
-                                name="id_categoria"
-                                id="id_categoria"
-                                class="form-select @error('id_categoria') is-invalid @enderror">
+                            <div class="input-group">
+                                <select
+                                    name="id_categoria"
+                                    id="id_categoria"
+                                    class="form-select @error('id_categoria') is-invalid @enderror">
 
-                                <option value="">Seleccione una categoría</option>
+                                    <option value="">Seleccione una categoría</option>
 
-                                @foreach($categorias as $categoria)
-                                    <option
-                                        value="{{ $categoria->id }}"
-                                        {{ old('id_categoria') == $categoria->id ? 'selected' : '' }}>
-                                        {{ $categoria->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
+                                    @foreach($categorias as $categoria)
+                                        <option
+                                            value="{{ $categoria->id }}"
+                                            {{ old('id_categoria') == $categoria->id ? 'selected' : '' }}>
+                                            {{ $categoria->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button class="btn btn-outline-secondary" type="button" id="btnNuevaCategoria" title="Crear nueva categoría">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
 
                             @error('id_categoria')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -200,7 +205,112 @@
 
     </div>
 
+    <!-- Modal para crear nueva categoría -->
+    <div class="modal fade" id="modalNuevaCategoria" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-folder-plus me-2"></i>Nueva Categoría
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nombre_categoria" class="form-label fw-bold">Nombre de la Categoría</label>
+                        <input type="text" id="nombre_categoria" class="form-control" placeholder="Ej: Bebidas, Snack, Congelados...">
+                        <div id="nombreCategoriaError" class="text-danger small mt-1"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success fw-bold" id="btnGuardarCategoria">
+                        <i class="bi bi-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @stack('scripts')
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modalElement = document.getElementById('modalNuevaCategoria');
+    const modal = new bootstrap.Modal(modalElement);
+    
+    // Abrir modal al hacer click en el botón +
+    document.getElementById('btnNuevaCategoria').addEventListener('click', function() {
+        document.getElementById('nombre_categoria').value = '';
+        document.getElementById('nombreCategoriaError').textContent = '';
+        document.getElementById('nombre_categoria').classList.remove('is-invalid');
+        modal.show();
+    });
+
+    // Guardar categoría
+    document.getElementById('btnGuardarCategoria').addEventListener('click', function() {
+        const nombre = document.getElementById('nombre_categoria').value.trim();
+        const errorDiv = document.getElementById('nombreCategoriaError');
+        const input = document.getElementById('nombre_categoria');
+
+        errorDiv.textContent = '';
+        input.classList.remove('is-invalid');
+
+        if (!nombre) {
+            errorDiv.textContent = 'Debes ingresar el nombre de la categoría.';
+            input.classList.add('is-invalid');
+            return;
+        }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Guardando...';
+
+        fetch('{{ route("admin.productos.guardarCategoria") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ nombre: nombre })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Agregar la nueva categoría al select
+                const select = document.getElementById('id_categoria');
+                const option = document.createElement('option');
+                option.value = data.categoria.id;
+                option.textContent = data.categoria.nombre;
+                option.selected = true;
+                select.appendChild(option);
+
+                modal.hide();
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-save me-1"></i>Guardar';
+            } else {
+                errorDiv.textContent = data.message || 'Error al guardar.';
+                input.classList.add('is-invalid');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-save me-1"></i>Guardar';
+            }
+        })
+        .catch(error => {
+            errorDiv.textContent = 'Error de conexión.';
+            input.classList.add('is-invalid');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-save me-1"></i>Guardar';
+        });
+    });
+
+    // Limpiar error al escribir
+    document.getElementById('nombre_categoria').addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+        document.getElementById('nombreCategoriaError').textContent = '';
+    });
+});
+</script>
+@endpush
 
 </x-app-layout>

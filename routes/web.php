@@ -43,6 +43,12 @@ Route::middleware(['auth', 'role:administrador'])
             ->name('productos.datatable');
 
         Route::get('productos/verificar-codigo', [ProductoController::class, 'verificarCodigo']);
+        Route::post('productos/guardar-categoria', [ProductoController::class, 'guardarCategoria'])
+            ->name('productos.guardarCategoria');
+        Route::get('productos/categorias', [ProductoController::class, 'obtenerCategorias'])
+            ->name('productos.categorias');
+        Route::put('productos/categorias/{id}', [ProductoController::class, 'actualizarCategoria']);
+        Route::delete('productos/categorias/{id}', [ProductoController::class, 'eliminarCategoria']);
 
         Route::get('productos/plantilla', [ProductoController::class, 'descargarPlantilla'])
             ->name('productos.plantilla');

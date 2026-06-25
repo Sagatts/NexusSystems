@@ -37,8 +37,7 @@ function initProductosDatatable() {
             { data: 'acciones', name: 'acciones', orderable: false, searchable: false }
         ],
         initComplete: function() {
-            $('#filtro_categoria').removeClass('d-none');
-            $('.dataTables_filter label').before($('#filtro_categoria'));
+            // No mover el filtro, ya está en su lugar
         }
     });
 
