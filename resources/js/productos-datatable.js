@@ -63,8 +63,10 @@ function initProductosDatatable() {
                         _token: $('meta[name="csrf-token"]').attr('content')  // ← CSRF obligatorio
                     },
                     success: function(response) {
-                        Swal.fire('Eliminado', 'Producto eliminado correctamente', 'success');
-                        // recarga tu DataTable aquí
+                        Swal.fire('Eliminado', 'Producto eliminado correctamente', 'success')
+                        .then(function() {
+                            location.reload(); // ← agrega esto
+                        });
                     },
                     error: function(xhr) {
                         Swal.fire('Error', 'No se pudo eliminar el producto', 'error');

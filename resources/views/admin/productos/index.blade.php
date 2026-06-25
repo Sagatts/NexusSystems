@@ -29,14 +29,14 @@
                         <i class="bi bi-gear me-1"></i>Gestión de categorías
                     </button>
                     <select id="filtro_categoria" class="form-select form-select-sm" style="max-width: 250px;">
-                        <option value="">Todas las categorías</option>
+                        <option value="">Filtrar por categoria</option>
                         @foreach($categorias as $categoria)
                             <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <table id="tablaProductos" class="table table-striped table-hover align-middletext-nowrap" style="width: 100%;">
+                <table id="tablaProductos" class="table table-striped table-hover align-middle text-nowrap" style="width: 100%;">
                     <thead class="table-dark">
                         <tr>
                             <th>Código Barras</th>
@@ -61,8 +61,7 @@
     <script>window.productosDatatableRoute = "{{ route('admin.productos.datatable') }}";</script>
     <script>window.appUrl = "{{ url('/') }}";</script>
 
-    <!-- Modal Gestión de Categorías -->
-    <div class="modal fade" id="modalGestionCategorias" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modalGestionCategorias" tabindex="-1" data-bs-focus="false" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
                 <div class="modal-header bg-success text-white rounded-top-4">
@@ -72,7 +71,6 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Formulario nueva categoría -->
                     <div class="input-group mb-4">
                         <input type="text" id="inputNuevaCategoria" class="form-control" placeholder="Nueva categoría...">
                         <button class="btn btn-success fw-bold" id="btnAgregarCategoria">
@@ -81,7 +79,6 @@
                     </div>
                     <div id="errorNuevaCategoria" class="text-danger small mb-3"></div>
 
-                    <!-- Lista de categorías -->
                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                         <table class="table table-striped table-hover align-middle mb-0">
                             <thead class="table-success position-sticky top-0">
@@ -91,8 +88,7 @@
                                 </tr>
                             </thead>
                             <tbody id="tablaCategorias">
-                                <!-- Se llena con AJAX -->
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -103,8 +99,7 @@
         </div>
     </div>
 
-    <!-- Modal Editar Categoría -->
-    <div class="modal fade" id="modalEditarCategoria" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modalEditarCategoria" tabindex="-1" data-bs-focus="false" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
                 <div class="modal-header bg-success text-white rounded-top-4">
@@ -122,7 +117,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary fw-bold" id="btnCancelarEditarCategoria">Cancelar</button>
                     <button type="button" class="btn btn-success fw-bold" id="btnConfirmarEditar">Guardar cambios</button>
                 </div>
             </div>
@@ -133,41 +128,76 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var modalGestion = new bootstrap.Modal(document.getElementById('modalGestionCategorias'));
-    var modalEditar = new bootstrap.Modal(document.getElementById('modalEditarCategoria'));
 
+    const SwalDefault = Swal.mixin({
+        customClass: { container: 'swal-on-modal' },
+        didOpen: () => { document.activeElement?.blur(); }
+    });
+
+    var modalGestion = new bootstrap.Modal(document.getElementById('modalGestionCategorias'));
+    var modalEditar  = new bootstrap.Modal(document.getElementById('modalEditarCategoria'));
+
+    function limpiarFoco() {
+        if (document.activeElement) document.activeElement.blur();
+    }
+
+    // ── Abrir modal gestión ──────────────────────────────────────────────
     document.getElementById('btnGestionCategorias').addEventListener('click', function() {
+        limpiarFoco();
         cargarCategorias();
         modalGestion.show();
     });
 
+    // ── Cerrar modal gestión ─────────────────────────────────────────────
+    document.getElementById('modalGestionCategorias').addEventListener('hide.bs.modal', function() {
+        limpiarFoco();
+    });
+
+    // ── Cerrar modal editar ──────────────────────────────────────────────
+    document.getElementById('modalEditarCategoria').addEventListener('hide.bs.modal', function() {
+        limpiarFoco();
+    });
+
+    // ── Cancelar editar → volver a gestión ──────────────────────────────
+    document.getElementById('btnCancelarEditarCategoria').addEventListener('click', function() {
+        limpiarFoco();
+        modalEditar.hide();
+        document.getElementById('modalEditarCategoria').addEventListener('hidden.bs.modal', function volverGestion() {
+            cargarCategorias();
+            modalGestion.show();
+            document.getElementById('modalEditarCategoria').removeEventListener('hidden.bs.modal', volverGestion);
+        });
+    });
+
+    // ── Cargar categorías ────────────────────────────────────────────────
     function cargarCategorias() {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/admin/productos/categorias', true);
+        xhr.open('GET', window.appUrl + '/admin/productos/categorias', true);
         xhr.onload = function() {
-            if (xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText);
-                var tbody = document.getElementById('tablaCategorias');
-                if (!data.length) {
-                    tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">Sin categorías</td></tr>';
-                    return;
-                }
-                var html = '';
-                for (var i = 0; i < data.length; i++) {
-                    var c = data[i];
-                    html += '<tr><td class="fw-medium">' + c.nombre + '</td>';
-                    html += '<td class="text-center">';
-                    html += '<button class="btn btn-sm btn-warning me-1" onclick="editarCategoria(' + c.id + ')"><i class="bi bi-pencil"></i></button>';
-                    html += '<button class="btn btn-sm btn-danger" onclick="eliminarCategoria(' + c.id + ')"><i class="bi bi-trash"></i></button>';
-                    html += '</td></tr>';
-                }
-                tbody.innerHTML = html;
+            if (xhr.status !== 200) return;
+            var data = JSON.parse(xhr.responseText);
+            var tbody = document.getElementById('tablaCategorias');
+            if (!data.length) {
+                tbody.innerHTML = '<tr><td colspan="2" class="text-center text-muted">Sin categorías</td></tr>';
+                return;
             }
+            var html = '';
+            for (var i = 0; i < data.length; i++) {
+                var c = data[i];
+                html += '<tr><td class="fw-medium">' + c.nombre + '</td>';
+                html += '<td class="text-center">';
+                html += '<button class="btn btn-sm btn-warning me-1" onclick="editarCategoria(event,' + c.id + ')"><i class="bi bi-pencil"></i></button>';
+                html += '<button class="btn btn-sm btn-danger" onclick="eliminarCategoria(event,' + c.id + ')"><i class="bi bi-trash"></i></button>';
+                html += '</td></tr>';
+            }
+            tbody.innerHTML = html;
         };
         xhr.send();
     }
 
+    // ── Agregar categoría ────────────────────────────────────────────────
     document.getElementById('btnAgregarCategoria').addEventListener('click', function() {
+        limpiarFoco();
         var input = document.getElementById('inputNuevaCategoria');
         var error = document.getElementById('errorNuevaCategoria');
         var nombre = input.value.trim();
@@ -183,37 +213,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
         this.disabled = true;
         this.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        var btn = this;
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/admin/productos/guardar-categoria', true);
+        xhr.open('POST', window.appUrl + '/admin/productos/guardar-categoria', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
         xhr.onload = function() {
-            document.getElementById('btnAgregarCategoria').disabled = false;
-            document.getElementById('btnAgregarCategoria').innerHTML = '<i class="bi bi-plus-lg me-1"></i>Agregar';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Agregar';
 
             if (xhr.status === 200) {
                 var data = JSON.parse(xhr.responseText);
                 if (data.success) {
                     input.value = '';
-                    cargarCategorias();
-                    var select = document.getElementById('id_categoria');
-                    if (select) {
-                        var opt = document.createElement('option');
-                        opt.value = data.categoria.id;
-                        opt.textContent = data.categoria.nombre;
-                        select.appendChild(opt);
-                    }
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Categoría creada!',
-                        text: 'La categoría se ha agregado correctamente.',
-                        confirmButtonColor: '#198754',
-                        timer: 2000,
-                        showConfirmButton: false
+                    modalGestion.hide();
+                    document.getElementById('modalGestionCategorias').addEventListener('hidden.bs.modal', function onHidden() {
+                        document.getElementById('modalGestionCategorias').removeEventListener('hidden.bs.modal', onHidden);
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Categoría creada!',
+                            text: 'La categoría se ha agregado correctamente.',
+                            confirmButtonColor: '#198754',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(function() { location.reload(); });
                     });
                 } else {
                     error.textContent = data.message || 'Error al guardar.';
+                }
+            } else if (xhr.status === 422) {
+                var data = JSON.parse(xhr.responseText);
+                var errors = data.errors;
+                if (errors && errors.nombre) {
+                    error.textContent = errors.nombre[0];
+                    input.classList.add('is-invalid');
+                } else {
+                    error.textContent = 'Error de validación.';
                 }
             } else {
                 error.textContent = 'Error del servidor.';
@@ -227,21 +263,32 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('errorNuevaCategoria').textContent = '';
     });
 
-    window.editarCategoria = function(id) {
+    // ── Editar categoría ─────────────────────────────────────────────────
+    window.editarCategoria = function(event, id) {
+        limpiarFoco();
         var row = event.target.closest('tr');
-        var nombre = row.cells[0].textContent;
+        var nombre = row.cells[0].textContent.trim();
+
         document.getElementById('editCategoriaId').value = id;
         document.getElementById('editCategoriaNombre').value = nombre;
         document.getElementById('errorEditarCategoria').textContent = '';
         document.getElementById('editCategoriaNombre').classList.remove('is-invalid');
+
         modalGestion.hide();
-        modalEditar.show();
+        document.getElementById('modalGestionCategorias').addEventListener('hidden.bs.modal', function abrirEditar() {
+            modalEditar.show();
+            // CORREGIDO: setTimeout extendido para evitar conflictos de renderizado con lectores de pantalla
+            setTimeout(() => { document.getElementById('editCategoriaNombre').focus(); }, 200);
+            document.getElementById('modalGestionCategorias').removeEventListener('hidden.bs.modal', abrirEditar);
+        });
     };
 
+    // ── Guardar edición ──────────────────────────────────────────────────
     document.getElementById('btnConfirmarEditar').addEventListener('click', function() {
-        var id = document.getElementById('editCategoriaId').value;
+        limpiarFoco();
+        var id     = document.getElementById('editCategoriaId').value;
         var nombre = document.getElementById('editCategoriaNombre').value.trim();
-        var error = document.getElementById('errorEditarCategoria');
+        var error  = document.getElementById('errorEditarCategoria');
 
         error.textContent = '';
         document.getElementById('editCategoriaNombre').classList.remove('is-invalid');
@@ -254,31 +301,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         this.disabled = true;
         this.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        var btn = this;
 
         var xhr = new XMLHttpRequest();
-        xhr.open('PUT', '/admin/productos/categorias/' + id, true);
+        xhr.open('PUT', window.appUrl + '/admin/productos/categorias/' + id, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
         xhr.onload = function() {
+            btn.disabled = false;
+            btn.innerHTML = 'Guardar cambios';
             if (xhr.status === 200) {
                 var data = JSON.parse(xhr.responseText);
                 if (data.success) {
+                    limpiarFoco();
                     modalEditar.hide();
-                    cargarCategorias();
-                    Swal.fire({
+                    SwalDefault.fire({
                         icon: 'success',
                         title: '¡Categoría actualizada!',
                         text: 'Los cambios se han guardado correctamente.',
                         confirmButtonColor: '#198754',
                         timer: 2000,
                         showConfirmButton: false
-                    });
+                    }).then(function() { location.reload(); });
                 } else {
                     error.textContent = data.message || 'Error al actualizar.';
                 }
             }
-            document.getElementById('btnConfirmarEditar').disabled = false;
-            document.getElementById('btnConfirmarEditar').innerHTML = 'Guardar cambios';
         };
         xhr.send(JSON.stringify({ nombre: nombre }));
     });
@@ -288,49 +336,63 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('errorEditarCategoria').textContent = '';
     });
 
-    window.eliminarCategoria = function(id) {
-        Swal.fire({
-            title: '¿Eliminar categoría?',
-            text: 'Los productos asociados a la categoría eliminada serán movidos a "Sin categoría".',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then(function(result) {
-            if (!result.isConfirmed) return;
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('DELETE', '/admin/productos/categorias/' + id, true);
-            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    if (data.success) {
+    // ── Eliminar categoría ───────────────────────────────────────────────
+    window.eliminarCategoria = function(event, id) {
+        limpiarFoco();
+        modalGestion.hide();
+        
+        document.getElementById('modalGestionCategorias').addEventListener('hidden.bs.modal', function onHidden() {
+            document.getElementById('modalGestionCategorias').removeEventListener('hidden.bs.modal', onHidden);
+            
+            setTimeout(function() { 
+                Swal.fire({
+                    title: '¿Eliminar categoría?',
+                    text: 'Los productos asociados serán movidos a "Sin categoría".',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then(function(result) {
+                    if (!result.isConfirmed) {
                         cargarCategorias();
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Categoría eliminada!',
-                            text: 'La categoría ha sido eliminada con éxito.',
-                            confirmButtonColor: '#198754',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message || 'No se pudo eliminar.',
-                            confirmButtonColor: '#dc3545'
-                        });
+                        modalGestion.show();
+                        return;
                     }
-                }
-            };
-            xhr.send();
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('DELETE', window.appUrl + '/admin/productos/categorias/' + id, true);
+                    xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            var data = JSON.parse(xhr.responseText);
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Categoría eliminada!',
+                                    confirmButtonColor: '#198754',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(function() { location.reload(); });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message || 'No se pudo eliminar.',
+                                    confirmButtonColor: '#dc3545'
+                                }).then(function() {
+                                    cargarCategorias();
+                                    modalGestion.show();
+                                });
+                            }
+                        }
+                    };
+                    xhr.send();
+                });
+            }, 250); // CORREGIDO: Tiempo extendido para permitir que Bootstrap remueva la capa oscura (backdrop) y limpie aria-hidden
         });
     };
 });
 </script>
-
 </x-app-layout>

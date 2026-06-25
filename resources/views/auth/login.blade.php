@@ -24,12 +24,13 @@
                         RUT
                     </label>
 
+                    <!-- MODIFICADO: Ahora prioriza el viejo input, luego la cookie del RUT recordado, y si no, vacío -->
                     <input
                         id="rut"
                         type="text"
                         class="form-control @error('rut') is-invalid @enderror"
                         name="rut"
-                        value="{{ old('rut') }}"
+                        value="{{ old('rut', Cookie::get('remember_rut')) }}"
                         required
                         autofocus
                     >
@@ -69,11 +70,13 @@
                 </div>
 
                 <div class="form-check mb-3 text-start">
+                    <!-- MODIFICADO: Si existe la cookie guardada, dejamos la casilla marcada por defecto -->
                     <input
                         class="form-check-input"
                         type="checkbox"
                         name="remember"
-                        id="remember_me">
+                        id="remember_me"
+                        {{ Cookie::get('remember_rut') ? 'checked' : '' }}>
 
                     <label class="form-check-label" for="remember_me">
                         Recordarme

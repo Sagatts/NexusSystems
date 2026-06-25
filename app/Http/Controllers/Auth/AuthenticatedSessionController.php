@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,6 +29,14 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        if ($request->has('remember')) {
+        // Guarda el RUT por 1 año (525600 minutos)
+        Cookie::queue('remember_rut', $request->rut, 525600);
+        } else {
+            // Si no marcó la casilla, eliminamos el RUT recordado
+            Cookie::queue(Cookie::forget('remember_rut'));
+        }
 
         /** @var Usuario $user */
         $user = Auth::user();

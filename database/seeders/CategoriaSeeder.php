@@ -10,6 +10,7 @@ class CategoriaSeeder extends Seeder
     public function run(): void
     {
         $categorias = [
+            'Sin Categoria',
             'Carnes',
             'Embutidos',
             'Verduras',

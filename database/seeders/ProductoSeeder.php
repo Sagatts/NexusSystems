@@ -16,7 +16,7 @@ class ProductoSeeder extends Seeder
                 'precio_neto' => 1200,
                 'stock' => 100,
                 'fecha_vencimiento' => '2026-12-31',
-                'id_categoria' => 2
+                'id_categoria' => 3
             ],
             [
                 'codigo_barras' => '780000002',
@@ -24,7 +24,7 @@ class ProductoSeeder extends Seeder
                 'precio_neto' => 800,
                 'stock' => 50,
                 'fecha_vencimiento' => '2026-08-15',
-                'id_categoria' => 3
+                'id_categoria' => 4
             ],
             [
                 'codigo_barras' => '780000003',
@@ -32,7 +32,7 @@ class ProductoSeeder extends Seeder
                 'precio_neto' => 1500,
                 'stock' => 80,
                 'fecha_vencimiento' => '2027-01-01',
-                'id_categoria' => 6
+                'id_categoria' => 7
             ],
             [
                 'codigo_barras' => '780000004',
@@ -40,7 +40,7 @@ class ProductoSeeder extends Seeder
                 'precio_neto' => 6500,
                 'stock' => 40,
                 'fecha_vencimiento' => '2026-07-20',
-                'id_categoria' => 1
+                'id_categoria' => 2
             ],
             [
                 'codigo_barras' => '780000005',
@@ -48,7 +48,7 @@ class ProductoSeeder extends Seeder
                 'precio_neto' => 200,
                 'stock' => 200,
                 'fecha_vencimiento' => '2026-06-30',
-                'id_categoria' => 10
+                'id_categoria' => 11
             ]
         ]);
     }

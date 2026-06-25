@@ -27,7 +27,9 @@ class ProductoController extends Controller
 
     public function create()
     {
-        $categorias = Categoria::all();
+        $categorias = Categoria::orderBy('nombre')
+        ->where('nombre', '!=', 'Sin categoría')
+        ->get();
 
         return view(
             'admin.productos.create',
@@ -104,7 +106,10 @@ class ProductoController extends Controller
 
     public function obtenerCategorias()
     {
-        $categorias = Categoria::orderBy('nombre')->get();
+        $categorias = Categoria::orderBy('nombre')
+            ->where('nombre', '!=', 'Sin categoría')
+            ->get();
+            
         return response()->json($categorias);
     }
 
@@ -148,6 +153,7 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
+        
         $request->validate([
             'nombre' => 'required|string|max:255',
             'codigo_barras' => [
@@ -191,7 +197,9 @@ class ProductoController extends Controller
     {
         $producto = Producto::findOrFail($producto->id);
 
-        $categorias = Categoria::orderBy('nombre')->get();
+        $categorias = Categoria::orderBy('nombre')
+        ->where('nombre', '!=', 'Sin categoría')
+        ->get();
 
         return view('admin.productos.edit', compact(
             'producto',
