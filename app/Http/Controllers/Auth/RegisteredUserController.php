@@ -32,6 +32,12 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Primero formateamos el RUT
+        $rutFormateado = $this->formatearRut($request->rut);
+
+        // Validamos con el RUT formateado
+        $request->merge(['rut' => $rutFormateado]);
+
         $request->validate([
             'rut' => ['required', 'string', 'max:12', 'unique:'.Usuario::class, new ValidarRut()],
             'nombre' => ['required', 'string', 'max:100'],
@@ -40,11 +46,8 @@ class RegisteredUserController extends Controller
             'rol' => ['required', 'in:administrador,garzon,cocina'],
         ]);
 
-        // Normalizar RUT (remover puntos)
-        $rutNormalizado = str_replace(['.', ' '], '', $request->rut);
-
         $user = Usuario::create([
-            'rut' => $rutNormalizado,
+            'rut' => $rutFormateado,
             'nombre' => $request->nombre,
             'email' => $request->email,
             'contrasena' => Hash::make($request->password),
@@ -56,5 +59,28 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
+    }
+
+    /**
+     * Formatea un RUT al formato sin puntos (12345678-9).
+     */
+    private function formatearRut(?string $rut): ?string
+    {
+        if (empty($rut)) {
+            return null;
+        }
+
+        // Limpiamos el RUT
+        $rutLimpio = preg_replace('/[^0-9kK]/', '', strtoupper($rut));
+
+        if (strlen($rutLimpio) < 8 || strlen($rutLimpio) > 9) {
+            return $rut; // No formateamos si no es válido
+        }
+
+        $numero = substr($rutLimpio, 0, -1);
+        $dv = substr($rutLimpio, -1);
+
+        // Formateamos SIN puntos
+        return "{$numero}-{$dv}";
     }
 }

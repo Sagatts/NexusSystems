@@ -9,24 +9,20 @@ class ValidarRut implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $rut = str_replace(['.', ' '], '', $value);
+        // Limpiamos el RUT: quitamos todo lo que no sea dígito ni K/k
+        $rutLimpio = preg_replace('/[^0-9kK]/', '', strtoupper($value));
 
-        if (!str_contains($rut, '-')) {
-            $fail('El :attribute debe tener el formato correcto (ej: 12345678-9).');
+        if (strlen($rutLimpio) < 8 || strlen($rutLimpio) > 9) {
+            $fail('El :attribute debe tener entre 8 y 9 caracteres válidos.');
             return;
         }
 
-        $parts = explode('-', $rut);
-        if (count($parts) !== 2) {
-            $fail('El :attribute debe tener el formato correcto (ej: 12345678-9).');
-            return;
-        }
+        // Separamos el número y el dígito verificador
+        $numero = substr($rutLimpio, 0, -1);
+        $verificador = substr($rutLimpio, -1);
 
-        $numero = $parts[0];
-        $verificador = strtoupper($parts[1]);
-
-        if (!is_numeric($numero) || strlen($numero) < 7 || strlen($numero) > 8) {
-            $fail('El :attribute debe contener un número válido de 7 u 8 dígitos.');
+        if (!is_numeric($numero)) {
+            $fail('El :attribute debe contener un número válido.');
             return;
         }
 

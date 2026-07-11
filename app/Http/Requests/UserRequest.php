@@ -92,4 +92,37 @@ class UserRequest extends FormRequest
             'rol.in' => 'El rol seleccionado no es válido.',
         ];
     }
+
+    /**
+     * Prepara los datos para validación.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'rut' => $this->formatearRut($this->rut),
+        ]);
+    }
+
+    /**
+     * Formatea un RUT al formato sin puntos (12345678-9).
+     */
+    private function formatearRut(?string $rut): ?string
+    {
+        if (empty($rut)) {
+            return null;
+        }
+
+        // Limpiamos el RUT
+        $rutLimpio = preg_replace('/[^0-9kK]/', '', strtoupper($rut));
+
+        if (strlen($rutLimpio) < 8 || strlen($rutLimpio) > 9) {
+            return $rut; // No formateamos si no es válido
+        }
+
+        $numero = substr($rutLimpio, 0, -1);
+        $dv = substr($rutLimpio, -1);
+
+        // Formateamos SIN puntos
+        return "{$numero}-{$dv}";
+    }
 }

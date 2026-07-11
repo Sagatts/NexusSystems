@@ -22,6 +22,16 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Prepara los datos para validación.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'rut' => $this->formatearRut($this->rut),
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
@@ -43,10 +53,7 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // Normalizar RUT (remover puntos)
-        $rutNormalizado = $this->normalizarRut($this->rut);
-
-        if (! Auth::attempt(['rut' => $rutNormalizado, 'password' => $this->password], $this->boolean('remember'))) {
+        if (! Auth::attempt(['rut' => $this->rut, 'password' => $this->password], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -89,10 +96,25 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Normalizar RUT removiendo puntos y espacios
+     * Formatea un RUT al formato sin puntos (12345678-9).
      */
-    private function normalizarRut(string $rut): string
+    private function formatearRut(?string $rut): ?string
     {
-        return str_replace(['.', ' '], '', $rut);
+        if (empty($rut)) {
+            return null;
+        }
+
+        // Limpiamos el RUT
+        $rutLimpio = preg_replace('/[^0-9kK]/', '', strtoupper($rut));
+
+        if (strlen($rutLimpio) < 8 || strlen($rutLimpio) > 9) {
+            return $rut; // No formateamos si no es válido
+        }
+
+        $numero = substr($rutLimpio, 0, -1);
+        $dv = substr($rutLimpio, -1);
+
+        // Formateamos SIN puntos
+        return "{$numero}-{$dv}";
     }
 }
