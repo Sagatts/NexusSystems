@@ -50,7 +50,11 @@
                         <td>{{ $mov->cantidad }}</td>
                         <td>${{ number_format($mov->precio_neto, 0, ',', '.') }}</td>
                         <td>${{ number_format($mov->precio_neto * $mov->cantidad, 0, ',', '.') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($mov->fecha_hora)->format('d/m/Y H:i') }}</td>
+                        <td
+                            data-order="{{ \Carbon\Carbon::parse($mov->fecha_hora)->format('Y-m-d H:i:s') }}"
+                            data-search="{{ \Carbon\Carbon::parse($mov->fecha_hora)->format('Y-m-d H:i:s') }}">
+                            {{ \Carbon\Carbon::parse($mov->fecha_hora)->format('d/m/Y H:i') }}
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

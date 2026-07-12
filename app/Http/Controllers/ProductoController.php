@@ -7,6 +7,12 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Validation\Rule;
+use App\Models\Pedido;
+use App\Models\DetallePedido;
+use App\Models\Retiro;
+use App\Models\DetalleRetiro;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 // Importaciones necesarias para manejar Excel/CSV y capturar errores
 use App\Imports\ProductosImport;
@@ -164,7 +170,7 @@ class ProductoController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('PRODUCTO', 'codigo_barras')->whereNull('deleted_at'), // ← ignora eliminados
+                Rule::unique('PRODUCTO', 'codigo_barras')->whereNull('deleted_at'),
             ],
             'id_categoria' => 'required|exists:CATEGORIA,id',
             'precio_neto' => 'required|numeric|min:0',
@@ -181,11 +187,42 @@ class ProductoController extends Controller
             'fecha_vencimiento.after_or_equal' => 'La fecha de vencimiento no puede ser anterior a hoy.',
         ]);
 
-        Producto::create($request->all());
+        DB::beginTransaction();
 
-        return redirect()
-            ->route('admin.productos.index')
-            ->with('success', 'Producto creado correctamente');
+        try {
+
+            // Crear producto
+            $producto = Producto::create($request->all());
+
+            // Registrar el movimiento (Pedido)
+            $pedido = Pedido::create([
+                'fecha' => now(),
+                'id_usuario' => Auth::user()->rut
+            ]);
+
+            // Registrar detalle del movimiento
+            DetallePedido::create([
+                'id_pedido' => $pedido->id,
+                'id_producto' => $producto->id,
+                'cantidad' => $request->stock,
+                'costo' => $request->precio_neto,
+                'fecha_vencimiento' => $request->fecha_vencimiento
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.productos.index')
+                ->with('success', 'Producto creado correctamente');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->with('error', 'Error al registrar el producto: '.$e->getMessage());
+        }
     }
 
     public function verificarCodigo(Request $request)
@@ -236,7 +273,68 @@ class ProductoController extends Controller
             'fecha_vencimiento.after_or_equal' => 'La fecha de vencimiento no puede ser anterior a hoy.',
         ]);
 
-        $producto->update($request->all());
+        $stockAnterior = $producto->stock;
+        $stockNuevo = $request->stock;
+
+        DB::beginTransaction();
+
+        try {
+
+            $stockAnterior = $producto->stock;
+            $stockNuevo = $request->stock;
+
+            // Actualizar producto
+            $producto->update($request->all());
+
+            // Diferencia de stock
+            $diferencia = $stockNuevo - $stockAnterior;
+
+            // Si aumentó el stock → Entrada
+            if ($diferencia > 0) {
+
+                $pedido = Pedido::create([
+                    'fecha' => now(),
+                    'id_usuario' => Auth::user()->rut
+                ]);
+
+                DetallePedido::create([
+                    'id_pedido' => $pedido->id,
+                    'id_producto' => $producto->id,
+                    'cantidad' => $diferencia,
+                    'costo' => $producto->precio_neto,
+                    'fecha_vencimiento' => $request->fecha_vencimiento
+                ]);
+            }
+
+            // Si disminuyó el stock → Salida
+            elseif ($diferencia < 0) {
+
+                $retiro = Retiro::create([
+                    'fecha_hora' => now(),
+                    'id_usuario' => Auth::user()->rut
+                ]);
+
+                DetalleRetiro::create([
+                    'id_retiro' => $retiro->id,
+                    'id_producto' => $producto->id,
+                    'cantidad' => abs($diferencia)
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.productos.index')
+                ->with('success', 'Producto actualizado correctamente');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
  
         return redirect()
             ->route('admin.productos.index')
