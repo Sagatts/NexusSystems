@@ -148,3 +148,29 @@
 .grafico-container canvas {
     max-height: 300px !important;
 }
+
+@media (max-width: 768px) {
+    
+    /* 1. EVITAR QUE APRIETE EL CONTENIDO */
+    .sidebar-container {
+        position: fixed !important; 
+        top: 0;
+        left: 0;
+        height: 100vh; 
+        z-index: 1040 !important; 
+        box-shadow: 5px 0 15px rgba(0,0,0,0.2); 
+        width: 250px !important; 
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-container.collapsed {
+        transform: translateX(-100%) !important; 
+    }
+
+    /* 3. EVITAR QUE EL BOTÓN DESAPAREZCA */
+    .sidebar-container.collapsed #btnBurger {
+        right: -32px !important; 
+        border: 1px solid #dee2e6 !important;
+        box-shadow: 3px 0 5px rgba(0,0,0,0.1) !important;
+    }
+}
