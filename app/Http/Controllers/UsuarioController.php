@@ -13,16 +13,19 @@ class UsuarioController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Usuario::class);
         return view('admin.usuarios.index');
     }
 
     public function create()
     {
+        $this->authorize('create', Usuario::class);
         return view('admin.usuarios.create');
     }
 
     public function getUsuarios()
     {
+        $this->authorize('viewAny', Usuario::class);
         // Obtenemos el RUT del usuario autenticado de forma segura
         $rutAutenticado = Auth::user()->rut ?? null;
 
@@ -61,6 +64,8 @@ class UsuarioController extends Controller
 
     public function store(UserRequest $request)
     {
+        $this->authorize('create', Usuario::class);
+
         $data = $request->validated();
         
         if (!empty($data['contrasena'])) {
@@ -76,11 +81,14 @@ class UsuarioController extends Controller
 
     public function edit(Usuario $usuario)
     {
+        $this->authorize('update', $usuario);
         return view('admin.usuarios.edit', compact('usuario'));
     }
 
     public function update(UserRequest $request, Usuario $usuario)
     {
+        $this->authorize('update', $usuario);
+
         $data = $request->validated();
 
         if (!empty($data['contrasena'])) {
@@ -99,7 +107,9 @@ class UsuarioController extends Controller
     public function destroy($rut)
     {
         $usuario = Usuario::where('rut', $rut)->firstOrFail();
-        
+
+        $this->authorize('delete', $usuario);
+
         $usuario->delete();
 
         return response()->json([

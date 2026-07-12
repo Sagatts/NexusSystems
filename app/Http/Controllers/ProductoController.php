@@ -11,12 +11,13 @@ use Illuminate\Validation\Rule;
 // Importaciones necesarias para manejar Excel/CSV y capturar errores
 use App\Imports\ProductosImport;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
 
 class ProductoController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Producto::class);
+
         $categorias = Categoria::all();
         
         return view(
@@ -27,6 +28,8 @@ class ProductoController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Producto::class);
+
         $categorias = Categoria::orderBy('nombre')
         ->where('nombre', '!=', 'Sin categoría')
         ->get();
@@ -153,7 +156,8 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        
+        $this->authorize('create', Producto::class);
+
         $request->validate([
             'nombre' => 'required|string|max:255',
             'codigo_barras' => [
@@ -195,6 +199,8 @@ class ProductoController extends Controller
 
     public function edit(Producto $producto)
     {
+        $this->authorize('update', $producto);
+
         $producto = Producto::findOrFail($producto->id);
 
         $categorias = Categoria::orderBy('nombre')
@@ -209,6 +215,8 @@ class ProductoController extends Controller
 
     public function update(Request $request, Producto $producto)
     {
+        $this->authorize('update', $producto);
+
         $request->validate([
             'nombre' => 'required|string|max:255',
             'codigo_barras' => [
@@ -241,6 +249,9 @@ class ProductoController extends Controller
     public function destroy($id)
     {
         $producto = Producto::findOrFail($id);
+
+        $this->authorize('delete', $producto);
+
         $producto->delete();
 
         return response()->json([
@@ -265,19 +276,20 @@ class ProductoController extends Controller
             return redirect()->route('admin.productos.index')
                 ->with('success', '¡Productos importados correctamente!');
                 
-        } catch (ValidationException $e) {
-            $fallas = $e->failures();
-            $mensajeError = "Errores en el Excel: ";
-            
-            foreach ($fallas as $falla) {
-                $mensajeError .= "Fila " . $falla->row() . ": " . $falla->errors()[0] . " | ";
+        } catch (\Exception $e) {
+            // Verificamos si es una excepción de validación de Excel
+            if (method_exists($e, 'failures')) {
+                $fallas = $e->failures();
+                $mensajeError = "Errores en el Excel: ";
+                
+                foreach ($fallas as $falla) {
+                    $mensajeError .= "Fila " . $falla->row() . ": " . $falla->errors()[0] . " | ";
+                }
+
+                return back()->with('error', $mensajeError);
             }
 
-            // Redirige "atrás" (a la vista de Crear) y muestra el error detallado
-            return back()->with('error', $mensajeError);
-                
-        } catch (\Exception $e) {
-            // Redirige "atrás" y usa $e->getMessage() para mostrar el error exacto (ej: "La categoría no existe")
+            // Redirige "atrás" y usa $e->getMessage() para mostrar el error exacto
             return back()->with('error', $e->getMessage());
         }
     }

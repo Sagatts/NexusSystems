@@ -4,7 +4,11 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Producto;
+use App\Models\Usuario;
+use App\Policies\UsuarioPolicy;
+use App\Policies\ProductoPolicy;
 use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Registrar policies
+        Gate::policy(Usuario::class, UsuarioPolicy::class);
+        Gate::policy(Producto::class, ProductoPolicy::class);
+
         // Inyectamos la lógica en tu layout principal (app.blade.php)
         View::composer('layouts.app', function ($view) {
             $alertas = collect();
