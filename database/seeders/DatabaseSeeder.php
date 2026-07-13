@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             RetiroSeeder::class,
             DetalleRetiroSeeder::class,
+            PedidoSeeder::class,
+            DetallePedidoSeeder::class,
         ]);
     }
 }
