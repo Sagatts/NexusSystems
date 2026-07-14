@@ -41,14 +41,15 @@
             </div>
         </div>
         <div class="sidebar-footer">
-            <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
-                @csrf
-                <a href="{{ route('logout') }}" class="sidebar-link logout-link" title="Cerrar Sesión" onclick="event.preventDefault(); this.closest('form').submit();">
-                    <img src="{{ asset('img/img_sidebar/cerrarsesion.png') }}" alt="Cerrar Sesión" class="sidebar-icon">
-                    <span>Cerrar Sesión</span>
-                </a>
-            </form>
+            <a href="#" class="sidebar-link logout-link btn-logout" title="Cerrar Sesión">
+                <img src="{{ asset('img/img_sidebar/cerrarsesion.png') }}" alt="Cerrar Sesión" class="sidebar-icon">
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
+
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            @csrf
+        </form>
 
     </div>
 </aside>

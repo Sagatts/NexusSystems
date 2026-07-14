@@ -30,6 +30,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        session()->flash('login_reciente', true); // sesion fantasma para abrir alertas
+
         if ($request->has('remember')) {
         // Guarda el RUT por 1 año (525600 minutos)
         Cookie::queue('remember_rut', $request->rut, 525600);

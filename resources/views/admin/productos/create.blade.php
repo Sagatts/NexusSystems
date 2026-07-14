@@ -1,72 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Crear Nuevo Producto
+            Agregar Productos al Inventario
         </h2>
     </x-slot>
     <div class="container-fluid mt-4">
 
         <div class="card shadow-sm border-0 rounded-4">
 
-            <div class="card-header bg-white">
-                <h4 class="fw-bold mb-0">
-                    Agregar Productos al Inventario
-                </h4>
-            </div>
-
             <div class="card-body">
 
-                <h5 class="fw-bold text-secondary mb-3">
-                    <i class="bi bi-file-earmark-excel me-2"></i>Opción 1: Carga Masiva (Excel / CSV)
-                </h5>
-
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <strong>Error de formato:</strong> {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @error('archivo_excel')
-                    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <strong>El archivo fue rechazado:</strong> {{ $message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @enderror
-
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 bg-light p-3 rounded border">
-                    <div class="mb-2 mb-md-0">
-                        <a href="{{ route('admin.productos.plantilla') }}" class="btn btn-info btn-sm text-white fw-bold shadow-sm">
-                            <i class="bi bi-file-earmark-arrow-down me-1"></i> 1. Descargar Plantilla
-                        </a>
-                    </div>
-                    
-                    <div>
-                        <form action="{{ route('admin.productos.importar') }}" method="POST" enctype="multipart/form-data" class="d-flex align-items-center flex-wrap gap-2 m-0">
-                            @csrf
-                            <label class="fw-bold text-secondary mb-0" style="font-size: 0.9rem;">2. Archivo:</label>
-                            
-                            <input type="file" name="archivo_excel" id="archivo_excel" class="d-none" accept=".xlsx, .xls, .csv, .txt" required>
-                            
-                            <button type="button" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" onclick="document.getElementById('archivo_excel').click()">
-                                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Seleccionar archivo
-                            </button>
-                            
-                            <span id="nombre_archivo_visual" class="text-muted small mx-2 text-break">Ningún archivo seleccionado</span>
-                            
-                            <button type="submit" class="btn btn-success btn-sm text-white fw-bold shadow-sm">
-                                <i class="bi bi-cloud-arrow-up me-1"></i> Cargar Datos
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <hr class="my-4 text-muted">
-
-                <h5 class="fw-bold text-secondary mb-4">
-                    <i class="bi bi-keyboard me-2"></i>Opción 2: Registro Manual
+                <h5 class="fw-bold mb-4">
+                    <i class="bi bi-keyboard me-2"></i>Opción 1: Registro Manual
                 </h5>
 
                 <form id="productoForm" action="{{ route('admin.productos.store') }}" method="POST" novalidate>
@@ -199,6 +144,57 @@
                     </div>
 
                 </form>
+
+                <hr class="my-4 text-muted">
+
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-file-earmark-excel me-2"></i>Opción 2: Carga Masiva (Excel / CSV)
+                </h5>
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Error de formato:</strong> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @error('archivo_excel')
+                    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>El archivo fue rechazado:</strong> {{ $message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @enderror
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 bg-light p-3 rounded border">
+                    <div class="mb-2 mb-md-0">
+                        <a href="{{ route('admin.productos.plantilla') }}" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm">
+                            <i class="bi bi-file-earmark-arrow-down me-1"></i> 1. Descargar Plantilla
+                        </a>
+                    </div>
+                    
+                    <div>
+                        <form action="{{ route('admin.productos.importar') }}" method="POST" enctype="multipart/form-data" class="d-flex align-items-center flex-wrap gap-2 m-0">
+                            @csrf
+                            <label class="fw-bold text-secondary mb-0" style="font-size: 0.9rem;">2. Archivo:</label>
+                            
+                            <input type="file" name="archivo_excel" id="archivo_excel" class="d-none" accept=".xlsx, .xls, .csv, .txt" required>
+                            
+                            <button type="button" class="btn btn-info btn-sm text-white fw-bold shadow-sm" onclick="document.getElementById('archivo_excel').click()">
+                                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Seleccionar archivo
+                            </button>
+                            
+                            <span id="nombre_archivo_visual" class="text-muted small mx-2 text-break">Ningún archivo seleccionado</span>
+                            
+                            <button type="submit" class="btn btn-success btn-sm text-white fw-bold shadow-sm">
+                                <i class="bi bi-cloud-arrow-up me-1"></i> Cargar Datos
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                
             </div>
 
         </div>
