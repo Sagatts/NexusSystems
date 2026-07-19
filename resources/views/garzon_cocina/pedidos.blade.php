@@ -46,9 +46,12 @@
                 </span>
                 <div class="vr mx-2 text-muted" style="height: 30px;"></div>
                 <li class="nav-item">
-                    <form method="POST" action="{{ route('logout') }}" class="m-0">
+                    <button type="button" class="btn btn-link text-danger fw-bold text-decoration-none py-1 btn-logout">
+                        <i class="bi bi-box-arrow-right"></i> Salir
+                    </button>
+
+                    <form id="logout-form" method="POST" action="{{ route('logout') }}" class="d-none">
                         @csrf
-                        <button type="submit" class="btn btn-link text-danger fw-bold text-decoration-none py-1"><i class="bi bi-box-arrow-right"></i> Salir</button>
                     </form>
                 </li>
             </ul>
@@ -290,6 +293,32 @@
                         Swal.fire('Error crítico', 'Hubo un problema de comunicación con el servidor.', 'error');
                         btn.prop('disabled', false).text('Confirmar y Descontar');
                     }
+                });
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const logoutButtons = document.querySelectorAll('.btn-logout');
+
+            logoutButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault(); 
+
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¿Deseas cerrar tu sesión actual?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545', 
+                        cancelButtonColor: '#6c757d', 
+                        confirmButtonText: 'Sí, salir',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('logout-form').submit();
+                        }
+                    });
                 });
             });
         });

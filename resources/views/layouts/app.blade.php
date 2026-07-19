@@ -116,15 +116,7 @@
                             
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3 rounded-3" aria-labelledby="perfilDropdown">
                                 <li><a class="dropdown-item py-2" href="{{ route('profile.edit') }}">Mi Perfil</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item text-danger fw-bold py-2">
-                                            Cerrar Sesión
-                                        </button>
-                                    </form>
-                                </li>
+                                
                             </ul>
                         </li>
                     </ul>
@@ -151,14 +143,33 @@
                     icon: 'success',
                     title: '¡Operación Exitosa!',
                     text: "{{ session('success') }}",
-                    confirmButtonColor: '#198754', // Verde Bootstrap
-                    timer: 2000, // Se cierra solo en 2 segundos
+                    confirmButtonColor: '#198754', 
+                    timer: 2000, 
                     timerProgressBar: true,
                     showConfirmButton: false
                 });
             });
         </script>
     @endif
+
+    @if(session('login_reciente'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                let campana = document.getElementById('campanaDropdown');
+                if (campana) {
+                    // Usamos el motor nativo de Bootstrap para abrir el menú suavemente
+                    // sin simular un clic real, así evitamos que el botón quede "marcado"
+                    let menuAlertas = new bootstrap.Dropdown(campana);
+                    menuAlertas.show();
+                    
+                    // Le quitamos el foco al botón por si acaso (lo desmarcamos)
+                    campana.blur();
+                }
+            });
+        </script>
+    @endif
+    </body>
+</html>
 
     
 </body>
